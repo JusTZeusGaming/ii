@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useProperty } from "@/context/PropertyContext";
 import {
   Accordion,
   AccordionContent,
@@ -21,30 +22,10 @@ import {
   ChevronRight,
   Sparkles
 } from "lucide-react";
-import axios from "axios";
-
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function AccommodationPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const struttura = searchParams.get("struttura") || "casa-brezza";
-  const [property, setProperty] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProperty = async () => {
-      try {
-        const response = await axios.get(`${API}/properties/${struttura}`);
-        setProperty(response.data);
-      } catch (error) {
-        console.error("Error fetching property:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProperty();
-  }, [struttura]);
+  const { currentProperty: property, propertySlug, loading } = useProperty();
 
   if (loading) {
     return (
