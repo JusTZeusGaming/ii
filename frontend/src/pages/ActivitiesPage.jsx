@@ -65,15 +65,43 @@ export default function ActivitiesPage() {
         {categories.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => setActiveFilter(cat.id)}
+            onClick={() => cat.id === "nightlife" ? navigate("/nightlife") : setActiveFilter(cat.id)}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-              activeFilter === cat.id ? "bg-slate-900 text-white" : "bg-white text-slate-600 border border-slate-200"
+              activeFilter === cat.id ? "bg-slate-900 text-white" : cat.id === "nightlife" ? "bg-purple-100 text-purple-700 border border-purple-200" : "bg-white text-slate-600 border border-slate-200"
             }`}
           >
+            {cat.id === "nightlife" && <Moon className="w-3 h-3 inline mr-1" />}
             {cat.label}
           </button>
         ))}
       </motion.div>
+
+      {/* Nightlife Banner */}
+      {activeFilter === "all" && (
+        <motion.div 
+          initial={{ y: 10, opacity: 0 }} 
+          animate={{ y: 0, opacity: 1 }} 
+          transition={{ delay: 0.15 }}
+          className="mb-6"
+        >
+          <Card 
+            className="p-4 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 cursor-pointer interactive-card"
+            onClick={() => navigate("/nightlife")}
+            data-testid="nightlife-banner"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Music className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-white">Nightlife & Discoteche</h3>
+                <p className="text-white/80 text-sm">Eventi, navetta inclusa, zero pensieri</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-white/60" />
+            </div>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Top Experiences Carousel */}
       {activeFilter === "all" && topExperiences.length > 0 && (
