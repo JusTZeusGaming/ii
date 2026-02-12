@@ -25,6 +25,7 @@ import ExtraServicesPage from "@/pages/ExtraServicesPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import GuestAccessPage from "@/pages/GuestAccessPage";
+import NightlifePage from "@/pages/NightlifePage";
 
 // Layout
 import AppLayout from "@/components/AppLayout";
