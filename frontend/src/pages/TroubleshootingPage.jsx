@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useProperty } from "@/context/PropertyContext";
 import {
   Accordion,
   AccordionContent,
@@ -36,8 +37,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function TroubleshootingPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const struttura = searchParams.get("struttura") || "casa-brezza";
+  const { propertySlug, currentProperty } = useProperty();
   const [troubleshooting, setTroubleshooting] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -48,14 +48,16 @@ export default function TroubleshootingPage() {
     urgency: "medio",
     contact_preference: "whatsapp",
     guest_name: "",
-    guest_phone: ""
+    guest_phone: "",
+    guest_email: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API}/troubleshooting`);
+        // Try to get property-specific troubleshooting, fallback to generic
+        const response = await axios.get(`${API}/troubleshooting?property_slug=${propertySlug}`);
         setTroubleshooting(response.data);
       } catch (error) {
         console.error("Error:", error);
@@ -64,7 +66,7 @@ export default function TroubleshootingPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [propertySlug]);
 
   const handleSubmitTicket = async (e) => {
     e.preventDefault();
@@ -76,7 +78,8 @@ export default function TroubleshootingPage() {
     setIsSubmitting(true);
     try {
       const response = await axios.post(`${API}/support-tickets`, {
-        property_slug: struttura,
+        property_slug: propertySlug,
+        property_name: currentProperty?.name || propertySlug,
         ...formData
       });
       setTicketNumber(response.data.ticket_number);
@@ -111,7 +114,7 @@ export default function TroubleshootingPage() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate(`/alloggio?struttura=${struttura}`)}
+          onClick={() => navigate(`/alloggio`)}
           className="rounded-full"
         >
           <ChevronLeft className="w-5 h-5" />
