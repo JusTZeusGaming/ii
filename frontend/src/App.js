@@ -23,6 +23,7 @@ import TroubleshootingPage from "@/pages/TroubleshootingPage";
 import ExtraServicesPage from "@/pages/ExtraServicesPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
+import GuestAccessPage from "@/pages/GuestAccessPage";
 
 // Layout
 import AppLayout from "@/components/AppLayout";
@@ -52,6 +53,7 @@ function AnimatedRoutes() {
         <Route path="/servizi-extra" element={<AppLayout><ExtraServicesPage /></AppLayout>} />
         <Route path="/admin" element={<AdminLoginPage />} />
         <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+        <Route path="/p/:token" element={<GuestAccessPage />} />
       </Routes>
     </AnimatePresence>
   );
