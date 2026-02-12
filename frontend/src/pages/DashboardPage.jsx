@@ -47,26 +47,22 @@ const WeatherIcon = ({ icon }) => {
 
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const struttura = searchParams.get("struttura") || "casa-brezza";
-  const [property, setProperty] = useState(null);
+  const { currentProperty, propertySlug } = useProperty();
   const [weather, setWeather] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchWeather = async () => {
       try {
-        const [propRes, weatherRes] = await Promise.all([
-          axios.get(`${API}/properties/${struttura}`),
-          axios.get(`${API}/weather`)
-        ]);
-        setProperty(propRes.data);
+        const weatherRes = await axios.get(`${API}/weather`);
         setWeather(weatherRes.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching weather:", error);
       }
     };
-    fetchData();
-  }, [struttura]);
+    fetchWeather();
+  }, []);
+
+  const property = currentProperty;
 
   return (
     <div className="px-5 py-6" data-testid="dashboard-page">
@@ -88,7 +84,7 @@ export default function DashboardPage() {
       >
         <Card 
           className="relative overflow-hidden rounded-2xl cursor-pointer interactive-card mb-5 h-44"
-          onClick={() => navigate(`/alloggio?struttura=${struttura}`)}
+          onClick={() => navigate(`/alloggio`)}
           data-testid="accommodation-card"
         >
           {/* Background Image */}
