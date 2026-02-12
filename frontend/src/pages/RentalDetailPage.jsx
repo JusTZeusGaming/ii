@@ -194,12 +194,16 @@ export default function RentalDetailPage() {
         <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
           <div className="flex gap-3">
             <Card className="flex-1 p-4 rounded-xl bg-amber-50 border-0 text-center">
-              <p className="text-amber-600 font-bold text-xl">€{rental.daily_price}</p>
+              <p className="text-amber-600 font-bold text-xl">
+                {String(rental.daily_price).startsWith('€') ? rental.daily_price : `€${rental.daily_price}`}
+              </p>
               <p className="text-slate-500 text-xs">al giorno</p>
             </Card>
             {rental.weekly_price && (
               <Card className="flex-1 p-4 rounded-xl bg-green-50 border-0 text-center">
-                <p className="text-green-600 font-bold text-xl">€{rental.weekly_price}</p>
+                <p className="text-green-600 font-bold text-xl">
+                  {String(rental.weekly_price).startsWith('€') ? rental.weekly_price : `€${rental.weekly_price}`}
+                </p>
                 <p className="text-slate-500 text-xs">settimanale</p>
               </Card>
             )}
