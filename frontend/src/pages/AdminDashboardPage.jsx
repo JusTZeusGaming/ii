@@ -931,31 +931,42 @@ export default function AdminDashboardPage() {
                       <TableHead>Nome</TableHead>
                       <TableHead>Slug</TableHead>
                       <TableHead>Host</TableHead>
-                      <TableHead>Link portale</TableHead>
+                      <TableHead>Link & QR</TableHead>
                       <TableHead className="text-right">Azioni</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.properties.map((prop) => (
-                      <TableRow key={prop.id}>
-                        <TableCell className="font-medium">{prop.name}</TableCell>
-                        <TableCell><code className="text-xs bg-slate-100 px-2 py-1 rounded">{prop.slug}</code></TableCell>
-                        <TableCell>{prop.host_name}</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm" onClick={() => copyToClipboard(`${window.location.origin}/guida?struttura=${prop.slug}`)}>
-                            <Copy className="w-3 h-3 mr-1" /> Copia
-                          </Button>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="sm" onClick={() => openDialog("properties", prop)}>
-                            <Pencil className="w-4 h-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => handleDelete("properties", prop.id)}>
-                            <Trash2 className="w-4 h-4 text-red-500" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                    {data.properties.map((prop) => {
+                      const portalUrl = `${window.location.origin}/guida?struttura=${prop.slug}`;
+                      return (
+                        <TableRow key={prop.id}>
+                          <TableCell className="font-medium">{prop.name}</TableCell>
+                          <TableCell><code className="text-xs bg-slate-100 px-2 py-1 rounded">{prop.slug}</code></TableCell>
+                          <TableCell>{prop.host_name}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <Button variant="ghost" size="sm" onClick={() => copyToClipboard(portalUrl)} title="Copia link">
+                                <Copy className="w-3 h-3" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => showQrCode(portalUrl, prop.name)} title="Genera QR">
+                                <QrCode className="w-3 h-3" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={() => window.open(portalUrl, "_blank")} title="Apri portale">
+                                <ExternalLink className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" onClick={() => openDialog("properties", prop)}>
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDelete("properties", prop.id)}>
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                     {data.properties.length === 0 && (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center text-slate-500 py-8">
