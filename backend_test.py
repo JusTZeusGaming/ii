@@ -143,8 +143,10 @@ class TorreLapilloAPITester:
             "rental_id": "test-rental-id",
             "rental_name": "Test Rental",
             "guest_name": "Test Guest",
+            "guest_surname": "Guest",
             "guest_phone": "+39 123 456 7890",
-            "date": "2024-08-15",
+            "start_date": "2024-08-15",
+            "end_date": "2024-08-16",
             "notes": "Test booking"
         }
         success, response = self.run_test(
@@ -161,7 +163,9 @@ class TorreLapilloAPITester:
     def test_create_transport_request(self):
         """Test creating a transport request"""
         request_data = {
+            "transport_type": "NCC Transfer",
             "guest_name": "Test Guest",
+            "guest_surname": "Guest",
             "guest_phone": "+39 123 456 7890",
             "date": "2024-08-15",
             "num_people": 2,
