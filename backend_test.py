@@ -327,6 +327,8 @@ class TorreLapilloAPITester:
         if success and response.get('success'):
             print(f"   Request ID: {response.get('request_id')}")
         return success
+
+    def test_admin_crud_operations(self):
         """Test admin CRUD operations"""
         if not self.token:
             print("❌ No token available for admin CRUD tests")
@@ -336,7 +338,12 @@ class TorreLapilloAPITester:
         tests = [
             ("Admin Get Properties", "GET", "admin/properties", 200),
             ("Admin Get Rental Bookings", "GET", "admin/rental-bookings", 200),
-            ("Admin Get Transport Requests", "GET", "admin/transport-requests", 200)
+            ("Admin Get Transport Requests", "GET", "admin/transport-requests", 200),
+            ("Admin Get Beach Bookings", "GET", "admin/beach-bookings", 200),
+            ("Admin Get Restaurant Bookings", "GET", "admin/restaurant-bookings", 200),
+            ("Admin Get Experience Bookings", "GET", "admin/experience-bookings", 200),
+            ("Admin Get Support Tickets", "GET", "admin/support-tickets", 200),
+            ("Admin Get Extra Service Requests", "GET", "admin/extra-service-requests", 200)
         ]
 
         all_passed = True
