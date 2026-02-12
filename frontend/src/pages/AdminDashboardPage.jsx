@@ -293,8 +293,17 @@ export default function AdminDashboardPage() {
       return (
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           <div className="grid grid-cols-2 gap-3">
-            <div><Label>Nome *</Label><Input value={formData.name || ""} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Casa Brezza" /></div>
-            <div><Label>Slug URL *</Label><Input value={formData.slug || ""} onChange={(e) => setFormData({...formData, slug: e.target.value})} placeholder="casa-brezza" /></div>
+            <div><Label>Nome *</Label><Input value={formData.name || ""} onChange={(e) => {
+              const name = e.target.value;
+              const autoSlug = !editingItem ? generateSlug(name) : formData.slug;
+              setFormData({...formData, name, slug: autoSlug});
+            }} placeholder="Casa Brezza" /></div>
+            <div><Label>Slug URL *</Label>
+              <div className="flex gap-2">
+                <Input value={formData.slug || ""} onChange={(e) => setFormData({...formData, slug: e.target.value})} placeholder="casa-brezza" className="flex-1" />
+                <Button type="button" variant="outline" size="sm" onClick={() => setFormData({...formData, slug: generateSlug(formData.name || "")})}>Auto</Button>
+              </div>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div><Label>Nome WiFi</Label><Input value={formData.wifi_name || ""} onChange={(e) => setFormData({...formData, wifi_name: e.target.value})} /></div>
