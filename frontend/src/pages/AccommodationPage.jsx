@@ -212,7 +212,7 @@ export default function AccommodationPage() {
         >
           <Card 
             className="p-5 rounded-2xl bg-white border border-slate-100 cursor-pointer interactive-card"
-            onClick={() => navigate(`/assistenza?struttura=${struttura}`)}
+            onClick={() => navigate(`/assistenza`)}
             data-testid="assistance-card"
           >
             <div className="flex items-center justify-between">
@@ -238,7 +238,7 @@ export default function AccommodationPage() {
         >
           <Card 
             className="p-5 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 cursor-pointer interactive-card"
-            onClick={() => navigate(`/servizi-extra?struttura=${struttura}`)}
+            onClick={() => navigate(`/servizi-extra`)}
             data-testid="extra-services-card"
           >
             <div className="flex items-center justify-between">
