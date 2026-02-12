@@ -95,9 +95,16 @@ export default function DashboardPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/30" />
           
-          {/* Weather Badge */}
+          {/* Weather Badge - Clickable */}
           {weather && (
-            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-2">
+            <div 
+              className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate("/meteo");
+              }}
+              data-testid="weather-badge"
+            >
               <WeatherIcon icon={weather.icon} />
               <span className="text-sm font-semibold text-slate-900">{weather.temperature}°C</span>
               {weather.wind_speed > 0 && (
