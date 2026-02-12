@@ -407,11 +407,13 @@ class TransportRequestCreate(BaseModel):
 
 class SupportTicketCreate(BaseModel):
     property_slug: str
+    property_name: Optional[str] = ""
     description: str
     urgency: str = "medio"
     contact_preference: str = "whatsapp"
     guest_name: Optional[str] = ""
     guest_phone: Optional[str] = ""
+    guest_email: Optional[str] = ""
     booking_token: Optional[str] = None
 
 class ExtraServiceRequestCreate(BaseModel):
