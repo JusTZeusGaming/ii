@@ -126,6 +126,81 @@ export default function AdminDashboardPage() {
     navigate("/admin");
   };
 
+  // QR Code state
+  const [qrDialogOpen, setQrDialogOpen] = useState(false);
+  const [qrUrl, setQrUrl] = useState("");
+  const [qrTitle, setQrTitle] = useState("");
+
+  const showQrCode = (url, title) => {
+    setQrUrl(url);
+    setQrTitle(title);
+    setQrDialogOpen(true);
+  };
+
+  const downloadQrCode = () => {
+    const svg = document.querySelector("#qr-code-svg");
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `qr-${qrTitle.toLowerCase().replace(/\s+/g, "-")}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
+
+  // Auto-generate slug from name
+  const generateSlug = (name) => {
+    return name.toLowerCase()
+      .replace(/[àáâãäå]/g, "a")
+      .replace(/[èéêë]/g, "e")
+      .replace(/[ìíîï]/g, "i")
+      .replace(/[òóôõö]/g, "o")
+      .replace(/[ùúûü]/g, "u")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  };
+
+  // Send WhatsApp notification
+  const sendWhatsAppNotification = (message) => {
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/${WHATSAPP_NUMBER.replace("+", "")}?text=${encodedMessage}`, "_blank");
+  };
+
+  // Confirm booking and notify customer
+  const confirmAndNotify = async (collection, item, status) => {
+    await updateRequestStatus(collection, item.id, status);
+    
+    const statusLabels = {
+      confirmed: "Confermata",
+      cancelled: "Annullata",
+      resolved: "Risolta"
+    };
+    
+    const customerPhone = item.guest_phone?.replace(/\s/g, "");
+    if (customerPhone && status !== "pending") {
+      const message = status === "confirmed" 
+        ? `✅ La tua richiesta "${item.rental_name || item.restaurant_name || item.experience_name || item.event_name || "assistenza"}" è stata CONFERMATA! Grazie per aver scelto Your Journey.`
+        : status === "cancelled"
+        ? `❌ Purtroppo la tua richiesta non può essere confermata. Ti contatteremo presto.`
+        : `✅ Il tuo ticket è stato risolto!`;
+      
+      if (window.confirm(`Vuoi inviare conferma WhatsApp al cliente (${customerPhone})?`)) {
+        window.open(`https://wa.me/${customerPhone.replace("+", "")}?text=${encodeURIComponent(message)}`, "_blank");
+      }
+    }
+  };
+
   const openDialog = (type, item = null) => {
     setDialogType(type);
     setEditingItem(item);
