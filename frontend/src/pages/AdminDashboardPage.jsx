@@ -71,7 +71,8 @@ export default function AdminDashboardPage() {
     rentals: [],
     nightlifeEvents: [],
     guestBookings: [],
-    allRequests: null
+    allRequests: null,
+    mapInfo: []
   });
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
