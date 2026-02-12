@@ -250,6 +250,10 @@ class ExperienceBase(BaseModel):
     included: Optional[List[str]] = None
     extras: Optional[List[str]] = None
     min_participants: Optional[int] = None
+    # Upsell services - selectable extras with prices
+    upsell_services: List[dict] = []  # [{name, description, price, enabled}]
+    # Fixed available dates (if empty, any date is selectable)
+    fixed_dates: List[str] = []  # ["2025-08-15", "2025-08-20", ...]
 
 class ExperienceCreate(BaseModel):
     name: str
@@ -263,6 +267,8 @@ class ExperienceCreate(BaseModel):
     included: Optional[List[str]] = None
     extras: Optional[List[str]] = None
     min_participants: Optional[int] = None
+    upsell_services: List[dict] = []
+    fixed_dates: List[str] = []
 
 class NightlifeEvent(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
