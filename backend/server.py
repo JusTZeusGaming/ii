@@ -34,6 +34,7 @@ resend.api_key = os.environ.get('RESEND_API_KEY')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'onboarding@resend.dev')
 NOTIFICATION_EMAIL = os.environ.get('NOTIFICATION_EMAIL', 'nico.suez2000@gmail.com')
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'nico.suez2000@gmail.com')
+ADMIN_WHATSAPP = os.environ.get('ADMIN_WHATSAPP', '+393293236473')
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -41,6 +42,14 @@ security = HTTPBearer()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# ============== WHATSAPP HELPER ==============
+
+def generate_whatsapp_link(message: str) -> str:
+    """Generate WhatsApp link with precomposed message"""
+    phone = ADMIN_WHATSAPP.replace("+", "").replace(" ", "")
+    encoded_message = message.replace(" ", "%20").replace("\n", "%0A")
+    return f"https://wa.me/{phone}?text={encoded_message}"
 
 # ============== EMAIL HELPER ==============
 
