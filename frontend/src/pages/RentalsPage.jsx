@@ -3,17 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ChevronLeft, Calendar, Check } from "lucide-react";
-import { toast } from "sonner";
+import { ChevronLeft, Umbrella, Car, ChevronRight } from "lucide-react";
 import axios from "axios";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
@@ -22,15 +12,7 @@ export default function RentalsPage() {
   const navigate = useNavigate();
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRental, setSelectedRental] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    guest_name: "",
-    guest_phone: "",
-    date: "",
-    notes: ""
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   useEffect(() => {
     const fetchRentals = async () => {
@@ -46,56 +28,45 @@ export default function RentalsPage() {
     fetchRentals();
   }, []);
 
-  const handleBookClick = (rental) => {
-    setSelectedRental(rental);
-    setIsDialogOpen(true);
-  };
+  const mareRentals = rentals.filter(r => r.category === "mare");
+  const spostamentiRentals = rentals.filter(r => r.category === "spostamenti");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.guest_name || !formData.guest_phone || !formData.date) {
-      toast.error("Compila tutti i campi obbligatori");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await axios.post(`${API}/rental-bookings`, {
-        rental_id: selectedRental.id,
-        rental_name: selectedRental.name,
-        ...formData
-      });
-      toast.success("Prenotazione inviata con successo!");
-      setIsDialogOpen(false);
-      setFormData({ guest_name: "", guest_phone: "", date: "", notes: "" });
-    } catch (error) {
-      toast.error("Errore nell'invio della prenotazione");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const displayRentals = activeCategory === "all" ? rentals : 
+    activeCategory === "mare" ? mareRentals : spostamentiRentals;
 
   return (
     <div className="px-5 py-6" data-testid="rentals-page">
       {/* Header */}
-      <motion.div 
-        className="flex items-center gap-3 mb-6"
-        initial={{ y: -10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-      >
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/guida")}
-          className="rounded-full"
-          data-testid="back-button"
-        >
+      <motion.div className="flex items-center gap-3 mb-6" initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/guida")} className="rounded-full">
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Noleggi</h1>
           <p className="text-slate-500 text-sm">Attrezzature per la tua vacanza</p>
         </div>
+      </motion.div>
+
+      {/* Category Tabs */}
+      <motion.div className="flex gap-2 mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
+        {[
+          { id: "all", label: "Tutti", icon: null },
+          { id: "mare", label: "Attrezzatura Mare", icon: Umbrella },
+          { id: "spostamenti", label: "Spostamenti", icon: Car }
+        ].map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => setActiveCategory(cat.id)}
+            className={`flex-1 p-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              activeCategory === cat.id 
+                ? "bg-slate-900 text-white" 
+                : "bg-white text-slate-600 border border-slate-200"
+            }`}
+          >
+            {cat.icon && <cat.icon className="w-4 h-4" />}
+            {cat.label}
+          </button>
+        ))}
       </motion.div>
 
       {/* Rentals Grid */}
@@ -106,133 +77,78 @@ export default function RentalsPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
-          {rentals.map((rental, index) => (
-            <motion.div
-              key={rental.id}
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.05 * index }}
-            >
-              <Card 
-                className="rounded-2xl overflow-hidden bg-white border border-slate-100"
-                data-testid={`rental-${rental.id}`}
-              >
-                <img 
-                  src={rental.image_url} 
-                  alt={rental.name}
-                  className="w-full h-24 object-cover"
-                />
-                <div className="p-3">
-                  <h4 className="font-semibold text-slate-900 text-sm">{rental.name}</h4>
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-2">{rental.description}</p>
-                  <div className="flex items-center justify-between mt-3">
-                    <span className="text-amber-600 font-bold text-sm">{rental.daily_price}</span>
-                    <Button
-                      size="sm"
-                      onClick={() => handleBookClick(rental)}
-                      className="bg-slate-900 text-white rounded-lg text-xs px-3 py-1 h-7"
-                      data-testid={`rental-book-${rental.id}`}
+        <>
+          {/* Mare Section */}
+          {(activeCategory === "all" || activeCategory === "mare") && mareRentals.length > 0 && (
+            <motion.div className="mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}>
+              {activeCategory === "all" && (
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <Umbrella className="w-4 h-4" /> Attrezzatura Mare
+                </h3>
+              )}
+              <div className="grid grid-cols-2 gap-3">
+                {(activeCategory === "all" ? mareRentals : displayRentals).map((rental, index) => (
+                  <motion.div
+                    key={rental.id}
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.05 * index }}
+                  >
+                    <Card 
+                      className="rounded-2xl overflow-hidden bg-white border border-slate-100 cursor-pointer interactive-card"
+                      onClick={() => navigate(`/noleggi/${rental.id}`)}
                     >
-                      Prenota
-                    </Button>
-                  </div>
-                </div>
-              </Card>
+                      <img src={rental.image_url} alt={rental.name} className="w-full h-24 object-cover" />
+                      <div className="p-3">
+                        <h4 className="font-semibold text-slate-900 text-sm line-clamp-1">{rental.name}</h4>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-amber-600 font-bold text-sm">{rental.daily_price}</span>
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
-          ))}
-        </div>
-      )}
-
-      {/* Booking Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-sm mx-4 rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              Prenota {selectedRental?.name}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {selectedRental && (
-            <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-              <div className="bg-slate-50 p-4 rounded-xl">
-                <p className="text-sm text-slate-600">
-                  <strong>Prezzo:</strong> {selectedRental.daily_price}
-                </p>
-                <p className="text-sm text-slate-500 mt-1">
-                  <strong>Regole:</strong> {selectedRental.rules}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="guest_name">Nome *</Label>
-                <Input
-                  id="guest_name"
-                  value={formData.guest_name}
-                  onChange={(e) => setFormData({...formData, guest_name: e.target.value})}
-                  placeholder="Il tuo nome"
-                  className="rounded-xl"
-                  data-testid="booking-name-input"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="guest_phone">Telefono *</Label>
-                <Input
-                  id="guest_phone"
-                  value={formData.guest_phone}
-                  onChange={(e) => setFormData({...formData, guest_phone: e.target.value})}
-                  placeholder="+39 123 456 7890"
-                  className="rounded-xl"
-                  data-testid="booking-phone-input"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="date">Data *</Label>
-                <div className="relative">
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) => setFormData({...formData, date: e.target.value})}
-                    className="rounded-xl"
-                    data-testid="booking-date-input"
-                  />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes">Note (opzionale)</Label>
-                <Textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                  placeholder="Es. Orario preferito di ritiro..."
-                  className="rounded-xl resize-none"
-                  rows={3}
-                  data-testid="booking-notes-input"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-slate-900 text-white rounded-xl py-3 font-semibold"
-                data-testid="booking-submit-btn"
-              >
-                {isSubmitting ? "Invio in corso..." : (
-                  <>
-                    <Check className="w-4 h-4 mr-2" />
-                    Conferma prenotazione
-                  </>
-                )}
-              </Button>
-            </form>
           )}
-        </DialogContent>
-      </Dialog>
+
+          {/* Spostamenti Section */}
+          {(activeCategory === "all" || activeCategory === "spostamenti") && spostamentiRentals.length > 0 && (
+            <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}>
+              {activeCategory === "all" && (
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <Car className="w-4 h-4" /> Spostamenti
+                </h3>
+              )}
+              <div className="grid grid-cols-2 gap-3">
+                {(activeCategory === "all" ? spostamentiRentals : displayRentals.filter(r => r.category === "spostamenti")).map((rental, index) => (
+                  <motion.div
+                    key={rental.id}
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.05 * index }}
+                  >
+                    <Card 
+                      className="rounded-2xl overflow-hidden bg-white border border-slate-100 cursor-pointer interactive-card"
+                      onClick={() => navigate(`/noleggi/${rental.id}`)}
+                    >
+                      <img src={rental.image_url} alt={rental.name} className="w-full h-24 object-cover" />
+                      <div className="p-3">
+                        <h4 className="font-semibold text-slate-900 text-sm line-clamp-1">{rental.name}</h4>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className="text-amber-600 font-bold text-sm">{rental.daily_price}</span>
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </>
+      )}
     </div>
   );
 }
