@@ -361,14 +361,23 @@ def main():
         ("Admin Login", tester.test_admin_login),
         ("Admin Profile", tester.test_admin_me),
         ("Get Property", tester.test_get_property),
+        ("Get Weather", tester.test_get_weather),
+        ("Get Supermarket", tester.test_get_supermarket),
+        ("Get Extra Services", tester.test_get_extra_services),
+        ("Get Troubleshooting", tester.test_get_troubleshooting),
         ("Get Beaches", tester.test_get_beaches),
         ("Get Restaurants", tester.test_get_restaurants),
         ("Get Experiences", tester.test_get_experiences),
         ("Get Rentals", tester.test_get_rentals),
         ("Get Map Info", tester.test_get_map_info),
         ("Get Transports", tester.test_get_transports),
+        ("Create Support Ticket", tester.test_create_support_ticket),
+        ("Create Beach Booking", tester.test_create_beach_booking),
+        ("Create Restaurant Booking", tester.test_create_restaurant_booking),
+        ("Create Experience Booking", tester.test_create_experience_booking),
         ("Create Rental Booking", tester.test_create_rental_booking),
         ("Create Transport Request", tester.test_create_transport_request),
+        ("Create Extra Service Request", tester.test_create_extra_service_request),
         ("Admin CRUD Operations", tester.test_admin_crud_operations)
     ]
 
