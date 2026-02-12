@@ -26,6 +26,7 @@ import AdminLoginPage from "@/pages/AdminLoginPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import GuestAccessPage from "@/pages/GuestAccessPage";
 import NightlifePage from "@/pages/NightlifePage";
+import WeatherPage from "@/pages/WeatherPage";
 
 // Layout
 import AppLayout from "@/components/AppLayout";
@@ -46,6 +47,7 @@ function AnimatedRoutes() {
         <Route path="/attivita" element={<AppLayout><ActivitiesPage /></AppLayout>} />
         <Route path="/attivita/:id" element={<AppLayout><ExperienceDetailPage /></AppLayout>} />
         <Route path="/nightlife" element={<AppLayout><NightlifePage /></AppLayout>} />
+        <Route path="/meteo" element={<AppLayout><WeatherPage /></AppLayout>} />
         <Route path="/noleggi" element={<AppLayout><RentalsPage /></AppLayout>} />
         <Route path="/noleggi/:id" element={<AppLayout><RentalDetailPage /></AppLayout>} />
         <Route path="/mappe" element={<AppLayout><MapsPage /></AppLayout>} />
