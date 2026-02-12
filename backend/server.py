@@ -710,6 +710,103 @@ async def get_rental(rental_id: str):
         raise HTTPException(status_code=404, detail="Rental not found")
     return rental
 
+@api_router.get("/rentals/{rental_id}/availability")
+async def get_rental_availability(rental_id: str, start_date: str, end_date: str):
+    """Check rental availability for date range"""
+    rental = await db.rentals.find_one({"id": rental_id}, {"_id": 0})
+    if not rental:
+        raise HTTPException(status_code=404, detail="Rental not found")
+    
+    total_quantity = rental.get("total_quantity", 1)
+    
+    # Get confirmed bookings for this rental in date range
+    bookings = await db.rental_bookings.find({
+        "rental_id": rental_id,
+        "status": {"$in": ["pending", "confirmed"]},
+        "$or": [
+            {"start_date": {"$lte": end_date}, "end_date": {"$gte": start_date}},
+            {"start_date": {"$gte": start_date, "$lte": end_date}}
+        ]
+    }, {"_id": 0}).to_list(100)
+    
+    # Calculate availability per day
+    from datetime import datetime, timedelta
+    start = datetime.strptime(start_date, "%Y-%m-%d")
+    end = datetime.strptime(end_date, "%Y-%m-%d")
+    
+    availability = {}
+    current = start
+    while current <= end:
+        date_str = current.strftime("%Y-%m-%d")
+        booked = sum(1 for b in bookings if b.get("start_date", "") <= date_str <= b.get("end_date", b.get("start_date", "")))
+        availability[date_str] = max(0, total_quantity - booked)
+        current += timedelta(days=1)
+    
+    return {
+        "rental_id": rental_id,
+        "total_quantity": total_quantity,
+        "auto_confirm": rental.get("auto_confirm", False),
+        "availability": availability,
+        "fully_available": all(v > 0 for v in availability.values())
+    }
+
+@api_router.get("/restaurants/{restaurant_id}/time-slots")
+async def get_restaurant_time_slots(restaurant_id: str, date: str):
+    """Get available time slots for a restaurant on a specific date"""
+    restaurant = await db.restaurants.find_one({"id": restaurant_id}, {"_id": 0})
+    if not restaurant:
+        raise HTTPException(status_code=404, detail="Restaurant not found")
+    
+    # Check if booking is enabled
+    if not restaurant.get("booking_enabled", True):
+        return {"available": False, "message": "Prenotazioni non disponibili"}
+    
+    # Check if day is bookable
+    from datetime import datetime
+    date_obj = datetime.strptime(date, "%Y-%m-%d")
+    day_name = date_obj.strftime("%a").lower()
+    
+    bookable_days = restaurant.get("bookable_days", [])
+    if bookable_days and day_name not in bookable_days:
+        return {"available": False, "message": "Ristorante chiuso in questo giorno", "slots": []}
+    
+    # Get time slots
+    time_slots = restaurant.get("time_slots", [])
+    if not time_slots:
+        # Default slots if not configured
+        time_slots = [
+            {"time": "12:30", "max_covers": 40},
+            {"time": "13:00", "max_covers": 40},
+            {"time": "19:30", "max_covers": 40},
+            {"time": "20:00", "max_covers": 40},
+            {"time": "20:30", "max_covers": 40},
+            {"time": "21:00", "max_covers": 40}
+        ]
+    
+    # Get existing bookings for this date
+    bookings = await db.restaurant_bookings.find({
+        "restaurant_id": restaurant_id,
+        "date": date,
+        "status": {"$in": ["pending", "confirmed"]}
+    }, {"_id": 0}).to_list(100)
+    
+    # Calculate available covers per slot
+    result_slots = []
+    for slot in time_slots:
+        slot_time = slot.get("time")
+        max_covers = slot.get("max_covers", 40)
+        booked_covers = sum(b.get("num_people", 0) for b in bookings if b.get("time") == slot_time)
+        available_covers = max(0, max_covers - booked_covers)
+        result_slots.append({
+            "time": slot_time,
+            "max_covers": max_covers,
+            "booked_covers": booked_covers,
+            "available_covers": available_covers,
+            "available": available_covers > 0
+        })
+    
+    return {"available": True, "slots": result_slots}
+
 @api_router.get("/map-info")
 async def get_map_info():
     info = await db.map_info.find({}, {"_id": 0}).to_list(100)
