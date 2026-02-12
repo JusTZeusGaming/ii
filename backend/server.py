@@ -217,6 +217,10 @@ class RestaurantBase(BaseModel):
     price_range: Optional[str] = None
     hours: Optional[str] = None
     reviews: Optional[List[dict]] = None
+    # Booking settings
+    booking_enabled: bool = True
+    bookable_days: List[str] = []  # ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+    time_slots: List[dict] = []  # [{time: "19:30", max_covers: 20, tables: {...}}]
 
 class RestaurantCreate(BaseModel):
     name: str
@@ -229,6 +233,9 @@ class RestaurantCreate(BaseModel):
     price_range: Optional[str] = None
     hours: Optional[str] = None
     reviews: Optional[List[dict]] = None
+    booking_enabled: bool = True
+    bookable_days: List[str] = []
+    time_slots: List[dict] = []
 
 class ExperienceBase(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
