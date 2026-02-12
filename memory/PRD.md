@@ -1,135 +1,118 @@
 # Your Journey - Guest Portal Torre Lapillo
 
 ## Problem Statement
-Web app "Guest Portal" mobile-first per ospiti di case vacanza a Torre Lapillo. Navigabile come un'app con bottom navigation, contenuti modificabili da admin panel.
+Web app "Guest Portal" mobile-first per ospiti di case vacanza a Torre Lapillo.
 
-## User Personas
-1. **Ospite/Turista**: Info su alloggio, spiagge, ristoranti, esperienze, noleggi, trasporti, nightlife
-2. **Host/Admin**: Gestisce strutture, contenuti, visualizza prenotazioni e ticket
+## What's Been Implemented (100% Working)
 
-## Core Requirements (Static)
-- Palette: Blu navy (#0F172A) + Giallo sabbia (#F59E0B) + Viola (#7C3AED) per Nightlife + Sfondi chiari
-- Mobile-first (iPhone 13/14/15)
-- Bottom navigation 4 tab (Guida, Alloggio, Servizi, Aiuto)
-- Admin panel con CRUD completo
-- WhatsApp: +39 3293236473
+### ✅ CORE FEATURES
+- **Dashboard ospite** con meteo live cliccabile
+- **Persistenza struttura** - PropertyContext mantiene contesto
+- **4 tab navigazione**: Guida, Alloggio, Servizi, Aiuto
 
----
+### ✅ PRENOTAZIONI (Tutti i form funzionanti)
+- Form noleggi con **calcolo totale automatico** (fix €0 -> €8)
+- Form ristoranti
+- Form esperienze
+- Form lidi/spiagge
+- Form nightlife (biglietto + navetta)
+- Ticket assistenza con numero automatico
 
-## What's Been Implemented
+### ✅ ADMIN PANEL COMPLETO
+- **Tab Richieste**: Tutte le prenotazioni con contatore (23)
+- **Tab Link Ospiti**: Dropdown strutture funzionante (Casa Brezza, Casa Bella)
+- **Tab Strutture**: PropertyEditor con 8 tab:
+  - Base (nome, slug, immagine)
+  - WiFi (rete, password, note)
+  - Check-in/out (orari, istruzioni)
+  - Contatti (host, emergenza)
+  - Regole casa
+  - FAQ personalizzabili
+  - Guasti comuni personalizzabili
+  - Servizi extra (attivo/disattivo, prezzi)
+- **Tab Spiagge/Ristoranti/Esperienze/Noleggi**: CRUD completo
+- **Tab Mappe & Info**: 26 elementi (parcheggi, farmacie, guardia medica, ecc.)
+- **QR Code generator** per ogni struttura
 
-### ✅ BUG FIX P0 (Completati 12/02/2026)
-1. **Persistenza struttura**: PropertyContext implementato - se entri con `?struttura=casa-bella`, rimani in Casa Bella ovunque
-2. **Link generico + QR**: Ogni struttura ha pulsanti "Copia Link", "QR Code", "Apri Portale"
-3. **Dropdown strutture**: Funziona correttamente nel form "Link Ospiti"
-
-### ✅ NOTIFICHE P1 (Completate 12/02/2026)
-- Email automatiche per TUTTE le richieste (prenotazioni, ticket)
-- WhatsApp precompilato: link wa.me generato per conferme admin
-- Pulsante conferma nell'admin che apre WhatsApp con messaggio precompilato
-
-### ✅ NIGHTLIFE P2 (Completato 12/02/2026)
+### ✅ NIGHTLIFE
 - Pagina `/nightlife` con eventi discoteca
-- Banner "Nightlife & Discoteche" in pagina Attività
-- Due opzioni prezzo: "Solo Ingresso" e "Ingresso + Navetta"
-- Form prenotazione con selezione pacchetto e calcolo totale
-- Pickup points per navetta
+- Pacchetti: Solo Ingresso / Ingresso + Navetta
+- Form prenotazione con calcolo totale
 
-### ✅ METEO DETTAGLIATO P2 (Completato 12/02/2026)
-- Badge meteo cliccabile nella Dashboard
-- Pagina `/meteo` con:
-  - Temperatura attuale, vento, umidità, visibilità
-  - Previsioni orarie (prossime 12 ore)
-  - Previsioni giornaliere (7 giorni)
-  - Consiglio del giorno basato sul meteo
+### ✅ METEO
+- Badge cliccabile nella dashboard
+- Pagina `/meteo` con previsioni orarie (12h) e giornaliere (7gg)
 
-### ✅ ADMIN/CMS (Completato)
-- Tab "Richieste": Tutte le prenotazioni con contatore badge
-- Tab "Link Ospiti": Creazione link univoci `/p/TOKEN`
-- Tab "Strutture" con:
-  - CRUD completo strutture
-  - Auto-generazione slug
-  - Pulsante "Copia Link"
-  - Pulsante "Genera QR" con download PNG
-  - Pulsante "Apri Portale"
-- CRUD per spiagge, ristoranti, esperienze, noleggi
+### ✅ NOTIFICHE
+- Email automatiche a `nico.suez2000@gmail.com`
+- WhatsApp precompilato per conferme
+
+### ✅ API AVANZATE
+- `GET /rentals/{id}/availability` - Disponibilità noleggi per data
+- `GET /restaurants/{id}/time-slots` - Fasce orarie con coperti disponibili
 
 ---
 
 ## Admin Credentials
-- Email: `nico.suez2000@gmail.com`
-- Password: `Thegame2000`
-- URL: `/admin`
+- **Email**: `nico.suez2000@gmail.com`
+- **Password**: `Thegame2000`
+- **URL**: `/admin`
 
-## URL Strutture
-- Portale generico: `/guida?struttura=casa-brezza`
-- Link univoco ospite: `/p/TOKEN`
-- Admin: `/admin/dashboard`
+## Strutture Attive
+- Casa Brezza (slug: `casa-brezza`)
+- Casa Bella (slug: `casa-bella`)
 
 ---
 
-## Tech Stack
-- Frontend: React 19, Tailwind CSS, Framer Motion, Shadcn/UI, qrcode.react
-- Backend: FastAPI, MongoDB (Motor), Open-Meteo API, Resend
-- Auth: JWT + bcrypt
-- State: PropertyContext per persistenza struttura
-
 ## Test Results (12/02/2026)
-- Backend: 100% passed (12/12 tests)
-- Frontend: 100% passed
-- Test files: `/app/test_reports/iteration_4.json`
+- Backend: **100%** (16/16 tests)
+- Frontend: **100%**
+- Report: `/app/test_reports/iteration_5.json`
 
 ---
 
 ## Prioritized Backlog
 
-### P1 (Prossimi da fare)
-- [ ] **Admin struttura completa**: WiFi, Check-in/out, Regole, FAQ, Guasti personalizzabili per struttura
-- [ ] **Dashboard richieste migliorata**: Stati (Nuova/In lavorazione/Confermata/Rifiutata/Chiusa)
-- [ ] **Servizi extra per struttura**: attivo/disattivo, prezzi diversi
-
-### P2 (Medi)
-- [ ] **Noleggi auto-conferma**: Calendario disponibilità + conferma automatica se disponibile
-- [ ] **Ristoranti fasce orarie**: Giorni prenotabili, max coperti per fascia, dropdown invece di input
-- [ ] **Upsell servizi**: Checkbox extra per esperienze con aggiornamento totale
-- [ ] **Date fisse eventi**: Selezione solo date specifiche disponibili
+### P2 (In Progress)
+- [ ] **Noleggi auto-conferma**: Se disponibile, conferma immediata
+- [ ] **Ristoranti dropdown fasce orarie**: Selezione da dropdown, non input
+- [ ] **Upsell esperienze**: Checkbox extra con aggiornamento totale
+- [ ] **Date fisse eventi**: Solo date selezionabili configurate
 
 ### P3 (Future)
-- [ ] Mappe & Info gestibile in admin con categorie
 - [ ] Tab Preferiti funzionante
-- [ ] Notifiche push
 - [ ] Pagamenti online (Stripe)
 - [ ] Multi-lingua (IT/EN)
+- [ ] Notifiche push
 
 ---
 
-## File di Riferimento Chiave
+## Tech Stack
+- **Frontend**: React 19, TailwindCSS, Framer Motion, Shadcn/UI, qrcode.react
+- **Backend**: FastAPI, MongoDB, Resend, Open-Meteo API
+- **Auth**: JWT + bcrypt
+- **State**: PropertyContext
+
+---
+
+## File Structure
 ```
 /app/
 ├── backend/
-│   ├── server.py            # API FastAPI
-│   └── .env                  # MONGO_URL, RESEND_API_KEY
+│   ├── server.py              # API FastAPI complete
+│   ├── tests/                 # Test pytest
+│   └── .env
 └── frontend/
     ├── src/
     │   ├── context/
-    │   │   └── PropertyContext.jsx   # Persistenza struttura
+    │   │   └── PropertyContext.jsx
+    │   ├── components/
+    │   │   └── PropertyEditor.jsx    # Editor 8 tab
     │   ├── pages/
-    │   │   ├── AdminDashboardPage.jsx  # Admin con QR
-    │   │   ├── NightlifePage.jsx       # Eventi discoteca
-    │   │   ├── WeatherPage.jsx         # Meteo dettagliato
+    │   │   ├── AdminDashboardPage.jsx
+    │   │   ├── NightlifePage.jsx
+    │   │   ├── WeatherPage.jsx
     │   │   └── ...
     │   └── App.js
     └── package.json
 ```
-
----
-
-## Known Working Features
-- ✅ Login admin
-- ✅ CRUD strutture con QR code
-- ✅ Form prenotazioni (noleggi, ristoranti, esperienze, lidi, nightlife)
-- ✅ Ticket assistenza
-- ✅ Link univoci ospiti
-- ✅ Persistenza struttura tra navigazione
-- ✅ Meteo live + dettagliato
-- ✅ Nightlife con pacchetti biglietto/navetta
