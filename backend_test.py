@@ -183,7 +183,150 @@ class TorreLapilloAPITester:
             print(f"   Request ID: {response.get('request_id')}")
         return success
 
-    def test_admin_crud_operations(self):
+    def test_get_weather(self):
+        """Test weather API endpoint"""
+        success, response = self.run_test("Get Weather", "GET", "weather", 200)
+        if success and 'temperature' in response:
+            print(f"   Temperature: {response.get('temperature')}°C")
+            print(f"   Description: {response.get('description')}")
+        return success
+
+    def test_get_supermarket(self):
+        """Test supermarket info endpoint"""
+        success, response = self.run_test("Get Supermarket", "GET", "supermarket", 200)
+        if success and 'name' in response:
+            print(f"   Supermarket: {response.get('name')}")
+        return success
+
+    def test_get_extra_services(self):
+        """Test extra services endpoint"""
+        success, response = self.run_test("Get Extra Services", "GET", "extra-services", 200)
+        if success and isinstance(response, list):
+            print(f"   Found {len(response)} extra services")
+        return success
+
+    def test_get_troubleshooting(self):
+        """Test troubleshooting endpoint"""
+        success, response = self.run_test("Get Troubleshooting", "GET", "troubleshooting", 200)
+        if success and isinstance(response, list):
+            print(f"   Found {len(response)} troubleshooting items")
+        return success
+
+    def test_create_support_ticket(self):
+        """Test creating a support ticket"""
+        ticket_data = {
+            "property_slug": "casa-brezza",
+            "description": "Test issue with air conditioning",
+            "urgency": "medio",
+            "contact_preference": "whatsapp",
+            "guest_name": "Test Guest",
+            "guest_phone": "+39 123 456 7890"
+        }
+        success, response = self.run_test(
+            "Create Support Ticket",
+            "POST",
+            "support-tickets",
+            200,
+            data=ticket_data
+        )
+        if success and response.get('success'):
+            print(f"   Ticket Number: {response.get('ticket_number')}")
+        return success
+
+    def test_create_beach_booking(self):
+        """Test creating a beach booking"""
+        booking_data = {
+            "beach_id": "test-beach-id",
+            "beach_name": "Test Beach",
+            "guest_name": "Test Guest",
+            "guest_surname": "Guest",
+            "guest_phone": "+39 123 456 7890",
+            "date": "2024-08-15",
+            "duration": "intera",
+            "row_preference": "indifferente",
+            "umbrella_type": "standard",
+            "notes": "Test beach booking"
+        }
+        success, response = self.run_test(
+            "Create Beach Booking",
+            "POST",
+            "beach-bookings",
+            200,
+            data=booking_data
+        )
+        if success and response.get('success'):
+            print(f"   Booking ID: {response.get('booking_id')}")
+        return success
+
+    def test_create_restaurant_booking(self):
+        """Test creating a restaurant booking"""
+        booking_data = {
+            "restaurant_id": "test-restaurant-id",
+            "restaurant_name": "Test Restaurant",
+            "guest_name": "Test Guest",
+            "guest_surname": "Guest",
+            "guest_phone": "+39 123 456 7890",
+            "date": "2024-08-15",
+            "time": "20:00",
+            "num_people": 2,
+            "notes": "Test restaurant booking"
+        }
+        success, response = self.run_test(
+            "Create Restaurant Booking",
+            "POST",
+            "restaurant-bookings",
+            200,
+            data=booking_data
+        )
+        if success and response.get('success'):
+            print(f"   Booking ID: {response.get('booking_id')}")
+        return success
+
+    def test_create_experience_booking(self):
+        """Test creating an experience booking"""
+        booking_data = {
+            "experience_id": "test-experience-id",
+            "experience_name": "Test Experience",
+            "guest_name": "Test Guest",
+            "guest_surname": "Guest",
+            "guest_phone": "+39 123 456 7890",
+            "date": "2024-08-15",
+            "time": "10:00",
+            "num_people": 2,
+            "notes": "Test experience booking"
+        }
+        success, response = self.run_test(
+            "Create Experience Booking",
+            "POST",
+            "experience-bookings",
+            200,
+            data=booking_data
+        )
+        if success and response.get('success'):
+            print(f"   Booking ID: {response.get('booking_id')}")
+        return success
+
+    def test_create_extra_service_request(self):
+        """Test creating an extra service request"""
+        request_data = {
+            "property_slug": "casa-brezza",
+            "service_type": "pulizia-extra",
+            "guest_name": "Test Guest",
+            "guest_surname": "Guest",
+            "guest_phone": "+39 123 456 7890",
+            "date": "2024-08-15",
+            "notes": "Test extra service request"
+        }
+        success, response = self.run_test(
+            "Create Extra Service Request",
+            "POST",
+            "extra-service-requests",
+            200,
+            data=request_data
+        )
+        if success and response.get('success'):
+            print(f"   Request ID: {response.get('request_id')}")
+        return success
         """Test admin CRUD operations"""
         if not self.token:
             print("❌ No token available for admin CRUD tests")
