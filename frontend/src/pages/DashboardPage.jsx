@@ -98,7 +98,7 @@ export default function DashboardPage() {
           {/* Weather Badge - Clickable */}
           {weather && (
             <div 
-              className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors"
+              className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-2 cursor-pointer hover:bg-white transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate("/meteo");
