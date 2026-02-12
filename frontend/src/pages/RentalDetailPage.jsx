@@ -59,37 +59,92 @@ export default function RentalDetailPage() {
     fetchRental();
   }, [id]);
 
-  const calculateTotal = () => {
-    let base = rental?.daily_price || "€0";
-    let extra = 0;
-    if (formData.delivery) extra += 5;
-    if (formData.pickup) extra += 5;
+  // Calculate days between dates
+  const calculateDays = () => {
+    if (!formData.start_date) return 1;
+    if (!formData.end_date || formData.end_date === formData.start_date) return 1;
     
-    if (formData.duration_type === "settimanale" && rental?.weekly_price) {
-      base = rental.weekly_price;
+    const start = new Date(formData.start_date);
+    const end = new Date(formData.end_date);
+    const diffTime = Math.abs(end - start);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return diffDays;
+  };
+
+  // Calculate total price
+  const calculateTotal = () => {
+    if (!rental) return "€0";
+    
+    const days = calculateDays();
+    let basePrice = 0;
+    
+    if (formData.duration_type === "settimanale" && rental.weekly_price && days >= 7) {
+      const weeks = Math.floor(days / 7);
+      const extraDays = days % 7;
+      basePrice = (weeks * rental.weekly_price) + (extraDays * rental.daily_price);
+    } else {
+      basePrice = days * rental.daily_price;
     }
     
-    return extra > 0 ? `${base} + €${extra} (consegna/ritiro)` : base;
+    let extras = 0;
+    if (formData.delivery) extras += 5;
+    if (formData.pickup) extras += 5;
+    
+    const total = basePrice + extras;
+    return `€${total}`;
+  };
+
+  const calculateTotalNumeric = () => {
+    if (!rental) return 0;
+    const days = calculateDays();
+    let basePrice = formData.duration_type === "settimanale" && rental.weekly_price && days >= 7
+      ? Math.floor(days / 7) * rental.weekly_price + (days % 7) * rental.daily_price
+      : days * rental.daily_price;
+    if (formData.delivery) basePrice += 5;
+    if (formData.pickup) basePrice += 5;
+    return basePrice;
   };
 
   const handleSubmitBooking = async (e) => {
     e.preventDefault();
-    if (!formData.guest_name || !formData.guest_phone || !formData.start_date) {
-      toast.error("Compila i campi obbligatori");
+    
+    // Basic validation - only name and phone required
+    if (!formData.guest_name.trim()) {
+      toast.error("Inserisci il tuo nome");
+      return;
+    }
+    if (!formData.guest_phone.trim()) {
+      toast.error("Inserisci il tuo numero di telefono");
+      return;
+    }
+    if (!formData.start_date) {
+      toast.error("Seleziona la data di inizio");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await axios.post(`${API}/rental-bookings`, {
+      const payload = {
         rental_id: rental.id,
         rental_name: rental.name,
-        ...formData,
-        total_price: calculateTotal()
-      });
+        guest_name: formData.guest_name.trim(),
+        guest_surname: formData.guest_surname.trim() || "",
+        guest_phone: formData.guest_phone.trim(),
+        start_date: formData.start_date,
+        end_date: formData.end_date || formData.start_date,
+        duration_type: formData.duration_type,
+        delivery: formData.delivery,
+        pickup: formData.pickup,
+        total_price: calculateTotal(),
+        notes: formData.notes || ""
+      };
+      
+      await axios.post(`${API}/rental-bookings`, payload);
       setBookingSubmitted(true);
+      toast.success("Prenotazione inviata!");
     } catch (error) {
-      toast.error("Errore nell'invio della prenotazione");
+      console.error("Booking error:", error);
+      toast.error("Errore nell'invio. Riprova.");
     } finally {
       setIsSubmitting(false);
     }
@@ -135,12 +190,12 @@ export default function RentalDetailPage() {
         <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
           <div className="flex gap-3">
             <Card className="flex-1 p-4 rounded-xl bg-amber-50 border-0 text-center">
-              <p className="text-amber-600 font-bold text-xl">{rental.daily_price}</p>
+              <p className="text-amber-600 font-bold text-xl">€{rental.daily_price}</p>
               <p className="text-slate-500 text-xs">al giorno</p>
             </Card>
             {rental.weekly_price && (
               <Card className="flex-1 p-4 rounded-xl bg-green-50 border-0 text-center">
-                <p className="text-green-600 font-bold text-xl">{rental.weekly_price}</p>
+                <p className="text-green-600 font-bold text-xl">€{rental.weekly_price}</p>
                 <p className="text-slate-500 text-xs">settimanale</p>
               </Card>
             )}
@@ -199,7 +254,11 @@ export default function RentalDetailPage() {
               </div>
               <h3 className="text-xl font-bold text-slate-900 mb-2">Prenotazione Inviata!</h3>
               <p className="text-slate-500 mb-4">Verificheremo la disponibilità e ti confermeremo a breve.</p>
-              <Button onClick={() => { setIsDialogOpen(false); setBookingSubmitted(false); }} className="w-full">Chiudi</Button>
+              <div className="bg-slate-100 rounded-xl p-4 mb-4">
+                <p className="text-sm text-slate-500">Totale</p>
+                <p className="text-2xl font-bold text-slate-900">{calculateTotal()}</p>
+              </div>
+              <Button onClick={() => { setIsDialogOpen(false); setBookingSubmitted(false); navigate("/noleggi"); }} className="w-full">Chiudi</Button>
             </div>
           ) : (
             <>
@@ -211,66 +270,135 @@ export default function RentalDetailPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Nome *</Label>
-                    <Input value={formData.guest_name} onChange={(e) => setFormData({...formData, guest_name: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      value={formData.guest_name} 
+                      onChange={(e) => setFormData({...formData, guest_name: e.target.value})} 
+                      placeholder="Mario"
+                      className="rounded-xl" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Cognome</Label>
-                    <Input value={formData.guest_surname} onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      value={formData.guest_surname} 
+                      onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} 
+                      placeholder="Rossi"
+                      className="rounded-xl" 
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Telefono *</Label>
-                  <Input value={formData.guest_phone} onChange={(e) => setFormData({...formData, guest_phone: e.target.value})} placeholder="+39..." className="rounded-xl" />
+                  <Input 
+                    value={formData.guest_phone} 
+                    onChange={(e) => setFormData({...formData, guest_phone: e.target.value})} 
+                    placeholder="+39 333 1234567" 
+                    className="rounded-xl" 
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Durata</Label>
+                  <Label>Tipo noleggio</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    {[{v: "giornaliero", l: `Giornaliero (${rental.daily_price})`}, {v: "settimanale", l: `Settimanale (${rental.weekly_price || rental.daily_price})`}].map(opt => (
-                      <button key={opt.v} type="button" onClick={() => setFormData({...formData, duration_type: opt.v})}
-                        className={`p-3 rounded-xl border-2 text-xs font-medium transition-all ${formData.duration_type === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}>
-                        {opt.l}
-                      </button>
-                    ))}
+                    <button 
+                      type="button" 
+                      onClick={() => setFormData({...formData, duration_type: "giornaliero"})}
+                      className={`p-3 rounded-xl border-2 text-xs font-medium transition-all ${formData.duration_type === "giornaliero" ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
+                    >
+                      Giornaliero (€{rental.daily_price}/g)
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setFormData({...formData, duration_type: "settimanale"})}
+                      className={`p-3 rounded-xl border-2 text-xs font-medium transition-all ${formData.duration_type === "settimanale" ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
+                    >
+                      Settimanale (€{rental.weekly_price || rental.daily_price * 7})
+                    </button>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Data inizio *</Label>
-                    <Input type="date" value={formData.start_date} onChange={(e) => setFormData({...formData, start_date: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      type="date" 
+                      value={formData.start_date} 
+                      onChange={(e) => setFormData({...formData, start_date: e.target.value})} 
+                      className="rounded-xl" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Data fine</Label>
-                    <Input type="date" value={formData.end_date} onChange={(e) => setFormData({...formData, end_date: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      type="date" 
+                      value={formData.end_date} 
+                      onChange={(e) => setFormData({...formData, end_date: e.target.value})} 
+                      min={formData.start_date}
+                      className="rounded-xl" 
+                    />
                   </div>
                 </div>
+
+                {/* Days calculation */}
+                {formData.start_date && (
+                  <div className="bg-blue-50 rounded-xl p-3 text-center">
+                    <p className="text-sm text-blue-600 font-medium">
+                      {calculateDays()} {calculateDays() === 1 ? "giorno" : "giorni"} selezionati
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-3">
                   <Label>Servizi extra</Label>
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="delivery" checked={formData.delivery} onCheckedChange={(c) => setFormData({...formData, delivery: c})} />
+                    <Checkbox 
+                      id="delivery" 
+                      checked={formData.delivery} 
+                      onCheckedChange={(c) => setFormData({...formData, delivery: !!c})} 
+                    />
                     <label htmlFor="delivery" className="text-sm">Consegna in struttura (+€5)</label>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Checkbox id="pickup" checked={formData.pickup} onCheckedChange={(c) => setFormData({...formData, pickup: c})} />
+                    <Checkbox 
+                      id="pickup" 
+                      checked={formData.pickup} 
+                      onCheckedChange={(c) => setFormData({...formData, pickup: !!c})} 
+                    />
                     <label htmlFor="pickup" className="text-sm">Ritiro in struttura (+€5)</label>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Note</Label>
-                  <Textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} placeholder="Orario preferito, richieste..." className="rounded-xl resize-none" rows={2} />
+                  <Textarea 
+                    value={formData.notes} 
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})} 
+                    placeholder="Orario preferito, richieste..." 
+                    className="rounded-xl resize-none" 
+                    rows={2} 
+                  />
                 </div>
 
-                <div className="bg-slate-100 rounded-xl p-3 text-center">
-                  <p className="text-sm text-slate-500">Totale stimato</p>
-                  <p className="text-lg font-bold text-slate-900">{calculateTotal()}</p>
+                {/* Total Price */}
+                <div className="bg-amber-50 rounded-xl p-4 text-center border-2 border-amber-200">
+                  <p className="text-sm text-slate-500">Totale da pagare</p>
+                  <p className="text-3xl font-bold text-amber-600">{calculateTotal()}</p>
+                  {(formData.delivery || formData.pickup) && (
+                    <p className="text-xs text-slate-500 mt-1">
+                      Include: noleggio {calculateDays()}g 
+                      {formData.delivery ? " + consegna €5" : ""}
+                      {formData.pickup ? " + ritiro €5" : ""}
+                    </p>
+                  )}
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-xl py-3 font-semibold">
-                  {isSubmitting ? "Invio..." : "Invia Prenotazione"}
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-xl py-3 font-semibold"
+                >
+                  {isSubmitting ? "Invio in corso..." : "Conferma Prenotazione"}
                 </Button>
               </form>
             </>

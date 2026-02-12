@@ -18,7 +18,6 @@ import {
   Car,
   Clock,
   Lightbulb,
-  ExternalLink,
   CheckCircle2
 } from "lucide-react";
 import { toast } from "sonner";
@@ -41,7 +40,6 @@ export default function BeachDetailPage() {
     duration: "intera",
     row_preference: "indifferente",
     umbrella_type: "standard",
-    extras: [],
     notes: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -62,21 +60,41 @@ export default function BeachDetailPage() {
 
   const handleSubmitBooking = async (e) => {
     e.preventDefault();
-    if (!formData.guest_name || !formData.guest_phone || !formData.date) {
-      toast.error("Compila i campi obbligatori");
+    
+    if (!formData.guest_name.trim()) {
+      toast.error("Inserisci il tuo nome");
+      return;
+    }
+    if (!formData.guest_phone.trim()) {
+      toast.error("Inserisci il tuo numero di telefono");
+      return;
+    }
+    if (!formData.date) {
+      toast.error("Seleziona la data");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await axios.post(`${API}/beach-bookings`, {
+      const payload = {
         beach_id: beach.id,
         beach_name: beach.name,
-        ...formData
-      });
+        guest_name: formData.guest_name.trim(),
+        guest_surname: formData.guest_surname.trim() || "",
+        guest_phone: formData.guest_phone.trim(),
+        date: formData.date,
+        duration: formData.duration,
+        row_preference: formData.row_preference,
+        umbrella_type: formData.umbrella_type,
+        notes: formData.notes || ""
+      };
+      
+      await axios.post(`${API}/beach-bookings`, payload);
       setBookingSubmitted(true);
+      toast.success("Prenotazione inviata!");
     } catch (error) {
-      toast.error("Errore nell'invio della prenotazione");
+      console.error("Booking error:", error);
+      toast.error("Errore nell'invio. Riprova.");
     } finally {
       setIsSubmitting(false);
     }
@@ -228,30 +246,58 @@ export default function BeachDetailPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Nome *</Label>
-                    <Input value={formData.guest_name} onChange={(e) => setFormData({...formData, guest_name: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      value={formData.guest_name} 
+                      onChange={(e) => setFormData({...formData, guest_name: e.target.value})} 
+                      placeholder="Mario"
+                      className="rounded-xl" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Cognome</Label>
-                    <Input value={formData.guest_surname} onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      value={formData.guest_surname} 
+                      onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} 
+                      placeholder="Rossi"
+                      className="rounded-xl" 
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Telefono *</Label>
-                  <Input value={formData.guest_phone} onChange={(e) => setFormData({...formData, guest_phone: e.target.value})} placeholder="+39..." className="rounded-xl" />
+                  <Input 
+                    value={formData.guest_phone} 
+                    onChange={(e) => setFormData({...formData, guest_phone: e.target.value})} 
+                    placeholder="+39 333 1234567" 
+                    className="rounded-xl" 
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label>Data *</Label>
-                  <Input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className="rounded-xl" />
+                  <Input 
+                    type="date" 
+                    value={formData.date} 
+                    onChange={(e) => setFormData({...formData, date: e.target.value})} 
+                    className="rounded-xl" 
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label>Durata</Label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[{v: "intera", l: "Intera"}, {v: "mezza_mattina", l: "Mattina"}, {v: "mezza_pomeriggio", l: "Pomeriggio"}].map(opt => (
-                      <button key={opt.v} type="button" onClick={() => setFormData({...formData, duration: opt.v})}
-                        className={`p-2 rounded-xl border-2 text-sm font-medium transition-all ${formData.duration === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}>
+                    {[
+                      {v: "intera", l: "Intera giornata"}, 
+                      {v: "mezza_mattina", l: "Mattina"}, 
+                      {v: "mezza_pomeriggio", l: "Pomeriggio"}
+                    ].map(opt => (
+                      <button 
+                        key={opt.v} 
+                        type="button" 
+                        onClick={() => setFormData({...formData, duration: opt.v})}
+                        className={`p-2 rounded-xl border-2 text-xs font-medium transition-all ${formData.duration === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
+                      >
                         {opt.l}
                       </button>
                     ))}
@@ -261,9 +307,17 @@ export default function BeachDetailPage() {
                 <div className="space-y-2">
                   <Label>Fila preferita</Label>
                   <div className="grid grid-cols-3 gap-2">
-                    {[{v: "prime", l: "Prime file"}, {v: "ultime", l: "Ultime file"}, {v: "indifferente", l: "Indifferente"}].map(opt => (
-                      <button key={opt.v} type="button" onClick={() => setFormData({...formData, row_preference: opt.v})}
-                        className={`p-2 rounded-xl border-2 text-xs font-medium transition-all ${formData.row_preference === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}>
+                    {[
+                      {v: "prime", l: "Prime file"}, 
+                      {v: "ultime", l: "Ultime file"}, 
+                      {v: "indifferente", l: "Indifferente"}
+                    ].map(opt => (
+                      <button 
+                        key={opt.v} 
+                        type="button" 
+                        onClick={() => setFormData({...formData, row_preference: opt.v})}
+                        className={`p-2 rounded-xl border-2 text-xs font-medium transition-all ${formData.row_preference === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
+                      >
                         {opt.l}
                       </button>
                     ))}
@@ -273,9 +327,16 @@ export default function BeachDetailPage() {
                 <div className="space-y-2">
                   <Label>Tipo ombrellone</Label>
                   <div className="grid grid-cols-2 gap-2">
-                    {[{v: "standard", l: "Standard"}, {v: "premium", l: "Premium (+€5)"}].map(opt => (
-                      <button key={opt.v} type="button" onClick={() => setFormData({...formData, umbrella_type: opt.v})}
-                        className={`p-2 rounded-xl border-2 text-sm font-medium transition-all ${formData.umbrella_type === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}>
+                    {[
+                      {v: "standard", l: "Standard"}, 
+                      {v: "premium", l: "Premium (+€5)"}
+                    ].map(opt => (
+                      <button 
+                        key={opt.v} 
+                        type="button" 
+                        onClick={() => setFormData({...formData, umbrella_type: opt.v})}
+                        className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${formData.umbrella_type === opt.v ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
+                      >
                         {opt.l}
                       </button>
                     ))}
@@ -284,11 +345,21 @@ export default function BeachDetailPage() {
 
                 <div className="space-y-2">
                   <Label>Note</Label>
-                  <Textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} placeholder="Richieste particolari..." className="rounded-xl resize-none" rows={2} />
+                  <Textarea 
+                    value={formData.notes} 
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})} 
+                    placeholder="Richieste particolari..." 
+                    className="rounded-xl resize-none" 
+                    rows={2} 
+                  />
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-xl py-3 font-semibold">
-                  {isSubmitting ? "Invio..." : "Invia Prenotazione"}
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-xl py-3 font-semibold"
+                >
+                  {isSubmitting ? "Invio in corso..." : "Invia Prenotazione"}
                 </Button>
               </form>
             </>

@@ -17,10 +17,7 @@ import {
   MapPin,
   Clock,
   Star,
-  Euro,
-  ExternalLink,
-  CheckCircle2,
-  Users
+  CheckCircle2
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
@@ -61,22 +58,44 @@ export default function RestaurantDetailPage() {
 
   const handleSubmitBooking = async (e) => {
     e.preventDefault();
-    if (!formData.guest_name || !formData.guest_phone || !formData.date || !formData.time) {
-      toast.error("Compila i campi obbligatori");
+    
+    if (!formData.guest_name.trim()) {
+      toast.error("Inserisci il tuo nome");
+      return;
+    }
+    if (!formData.guest_phone.trim()) {
+      toast.error("Inserisci il tuo numero di telefono");
+      return;
+    }
+    if (!formData.date) {
+      toast.error("Seleziona la data");
+      return;
+    }
+    if (!formData.time) {
+      toast.error("Seleziona l'orario");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await axios.post(`${API}/restaurant-bookings`, {
+      const payload = {
         restaurant_id: restaurant.id,
         restaurant_name: restaurant.name,
-        ...formData,
-        num_people: parseInt(formData.num_people)
-      });
+        guest_name: formData.guest_name.trim(),
+        guest_surname: formData.guest_surname.trim() || "",
+        guest_phone: formData.guest_phone.trim(),
+        date: formData.date,
+        time: formData.time,
+        num_people: formData.num_people,
+        notes: formData.notes || ""
+      };
+      
+      await axios.post(`${API}/restaurant-bookings`, payload);
       setBookingSubmitted(true);
+      toast.success("Prenotazione inviata!");
     } catch (error) {
-      toast.error("Errore nell'invio della prenotazione");
+      console.error("Booking error:", error);
+      toast.error("Errore nell'invio. Riprova.");
     } finally {
       setIsSubmitting(false);
     }
@@ -140,7 +159,7 @@ export default function RestaurantDetailPage() {
               )}
               {restaurant.price_range && (
                 <div className="flex items-center gap-3">
-                  <Euro className="w-5 h-5 text-slate-400" />
+                  <span className="text-slate-400 font-bold">€</span>
                   <span className="text-slate-600">Fascia prezzo: {restaurant.price_range}</span>
                 </div>
               )}
@@ -157,7 +176,7 @@ export default function RestaurantDetailPage() {
                 <Card key={idx} className="p-4 rounded-xl bg-slate-50 border-0">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="flex">
-                      {[...Array(review.rating)].map((_, i) => (
+                      {[...Array(review.rating || 5)].map((_, i) => (
                         <Star key={i} className="w-4 h-4 text-amber-400 fill-current" />
                       ))}
                     </div>
@@ -203,46 +222,95 @@ export default function RestaurantDetailPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Nome *</Label>
-                    <Input value={formData.guest_name} onChange={(e) => setFormData({...formData, guest_name: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      value={formData.guest_name} 
+                      onChange={(e) => setFormData({...formData, guest_name: e.target.value})} 
+                      placeholder="Mario"
+                      className="rounded-xl" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Cognome</Label>
-                    <Input value={formData.guest_surname} onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      value={formData.guest_surname} 
+                      onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} 
+                      placeholder="Rossi"
+                      className="rounded-xl" 
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Telefono *</Label>
-                  <Input value={formData.guest_phone} onChange={(e) => setFormData({...formData, guest_phone: e.target.value})} placeholder="+39..." className="rounded-xl" />
+                  <Input 
+                    value={formData.guest_phone} 
+                    onChange={(e) => setFormData({...formData, guest_phone: e.target.value})} 
+                    placeholder="+39 333 1234567" 
+                    className="rounded-xl" 
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Data *</Label>
-                    <Input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      type="date" 
+                      value={formData.date} 
+                      onChange={(e) => setFormData({...formData, date: e.target.value})} 
+                      className="rounded-xl" 
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Ora *</Label>
-                    <Input type="time" value={formData.time} onChange={(e) => setFormData({...formData, time: e.target.value})} className="rounded-xl" />
+                    <Input 
+                      type="time" 
+                      value={formData.time} 
+                      onChange={(e) => setFormData({...formData, time: e.target.value})} 
+                      className="rounded-xl" 
+                    />
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Numero persone</Label>
                   <div className="flex items-center gap-3">
-                    <Button type="button" variant="outline" size="icon" onClick={() => setFormData({...formData, num_people: Math.max(1, formData.num_people - 1)})}>-</Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => setFormData({...formData, num_people: Math.max(1, formData.num_people - 1)})}
+                    >
+                      -
+                    </Button>
                     <span className="text-lg font-semibold w-8 text-center">{formData.num_people}</span>
-                    <Button type="button" variant="outline" size="icon" onClick={() => setFormData({...formData, num_people: formData.num_people + 1})}>+</Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => setFormData({...formData, num_people: formData.num_people + 1})}
+                    >
+                      +
+                    </Button>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>Note</Label>
-                  <Textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} placeholder="Allergie, richieste speciali..." className="rounded-xl resize-none" rows={2} />
+                  <Textarea 
+                    value={formData.notes} 
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})} 
+                    placeholder="Allergie, richieste speciali..." 
+                    className="rounded-xl resize-none" 
+                    rows={2} 
+                  />
                 </div>
 
-                <Button type="submit" disabled={isSubmitting} className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-xl py-3 font-semibold">
-                  {isSubmitting ? "Invio..." : "Invia Prenotazione"}
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting} 
+                  className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-xl py-3 font-semibold"
+                >
+                  {isSubmitting ? "Invio in corso..." : "Invia Prenotazione"}
                 </Button>
               </form>
             </>
