@@ -925,9 +925,12 @@ export default function AdminDashboardPage() {
           <TabsContent value="properties">
             <Card className="p-4 rounded-2xl">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Gestione Strutture</h2>
-                <Button onClick={() => openDialog("properties")} size="sm" data-testid="add-property-btn">
-                  <Plus className="w-4 h-4 mr-2" /> Aggiungi
+                <div>
+                  <h2 className="text-lg font-semibold">Gestione Strutture</h2>
+                  <p className="text-sm text-slate-500">Configura WiFi, check-in, regole, FAQ, guasti e servizi per ogni struttura</p>
+                </div>
+                <Button onClick={() => { setEditingProperty(null); setPropertyEditorOpen(true); }} size="sm" data-testid="add-property-btn">
+                  <Plus className="w-4 h-4 mr-2" /> Nuova struttura
                 </Button>
               </div>
               <div className="overflow-x-auto">
@@ -937,6 +940,7 @@ export default function AdminDashboardPage() {
                       <TableHead>Nome</TableHead>
                       <TableHead>Slug</TableHead>
                       <TableHead>Host</TableHead>
+                      <TableHead>Config</TableHead>
                       <TableHead>Link & QR</TableHead>
                       <TableHead className="text-right">Azioni</TableHead>
                     </TableRow>
@@ -944,11 +948,19 @@ export default function AdminDashboardPage() {
                   <TableBody>
                     {data.properties.map((prop) => {
                       const portalUrl = `${window.location.origin}/guida?struttura=${prop.slug}`;
+                      const hasConfig = prop.wifi_name || prop.faq?.length > 0 || prop.common_issues?.length > 0 || prop.extra_services?.length > 0;
                       return (
                         <TableRow key={prop.id}>
                           <TableCell className="font-medium">{prop.name}</TableCell>
                           <TableCell><code className="text-xs bg-slate-100 px-2 py-1 rounded">{prop.slug}</code></TableCell>
-                          <TableCell>{prop.host_name}</TableCell>
+                          <TableCell>{prop.host_name || "-"}</TableCell>
+                          <TableCell>
+                            {hasConfig ? (
+                              <Badge className="bg-green-100 text-green-700 text-xs">Configurato</Badge>
+                            ) : (
+                              <Badge className="bg-amber-100 text-amber-700 text-xs">Da configurare</Badge>
+                            )}
+                          </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1">
                               <Button variant="ghost" size="sm" onClick={() => copyToClipboard(portalUrl)} title="Copia link">
@@ -963,10 +975,16 @@ export default function AdminDashboardPage() {
                             </div>
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button variant="ghost" size="sm" onClick={() => openDialog("properties", prop)}>
-                              <Pencil className="w-4 h-4" />
+                            <Button variant="ghost" size="sm" onClick={() => { setEditingProperty(prop); setPropertyEditorOpen(true); }} title="Configura struttura">
+                              <Settings className="w-4 h-4 text-blue-500" />
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => handleDelete("properties", prop.id)}>
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                               <Trash2 className="w-4 h-4 text-red-500" />
                             </Button>
                           </TableCell>
