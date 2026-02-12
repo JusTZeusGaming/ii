@@ -485,6 +485,80 @@ async def get_weather():
     except:
         return {"temperature": 28, "wind_speed": 12, "icon": "sun", "description": "Sereno"}
 
+@api_router.get("/weather/detailed")
+async def get_detailed_weather():
+    """Get detailed weather with hourly and daily forecast"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://api.open-meteo.com/v1/forecast",
+                params={
+                    "latitude": 40.2833,
+                    "longitude": 17.7667,
+                    "current": "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,visibility",
+                    "hourly": "temperature_2m,weather_code,precipitation_probability",
+                    "daily": "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset",
+                    "timezone": "Europe/Rome",
+                    "forecast_days": 7
+                },
+                timeout=10.0
+            )
+            data = response.json()
+            
+            current = data.get("current", {})
+            hourly = data.get("hourly", {})
+            daily = data.get("daily", {})
+            
+            # Process hourly (next 24 hours)
+            hourly_forecast = []
+            hourly_times = hourly.get("time", [])
+            hourly_temps = hourly.get("temperature_2m", [])
+            hourly_codes = hourly.get("weather_code", [])
+            hourly_precip = hourly.get("precipitation_probability", [])
+            
+            for i in range(min(24, len(hourly_times))):
+                hour = int(hourly_times[i].split("T")[1].split(":")[0])
+                hourly_forecast.append({
+                    "time": hourly_times[i],
+                    "temperature": round(hourly_temps[i]) if i < len(hourly_temps) else 0,
+                    "weather_code": hourly_codes[i] if i < len(hourly_codes) else 0,
+                    "precipitation_probability": hourly_precip[i] if i < len(hourly_precip) else 0,
+                    "is_night": hour < 6 or hour > 20
+                })
+            
+            # Process daily
+            daily_forecast = []
+            daily_dates = daily.get("time", [])
+            daily_max = daily.get("temperature_2m_max", [])
+            daily_min = daily.get("temperature_2m_min", [])
+            daily_codes = daily.get("weather_code", [])
+            
+            for i in range(len(daily_dates)):
+                daily_forecast.append({
+                    "date": daily_dates[i],
+                    "temp_max": round(daily_max[i]) if i < len(daily_max) else 0,
+                    "temp_min": round(daily_min[i]) if i < len(daily_min) else 0,
+                    "weather_code": daily_codes[i] if i < len(daily_codes) else 0
+                })
+            
+            return {
+                "current": {
+                    "temperature": round(current.get("temperature_2m", 25)),
+                    "humidity": current.get("relative_humidity_2m", 50),
+                    "weather_code": current.get("weather_code", 0),
+                    "wind_speed": round(current.get("wind_speed_10m", 0)),
+                    "visibility": current.get("visibility", 10000)
+                },
+                "hourly": hourly_forecast,
+                "daily": daily_forecast
+            }
+    except Exception as e:
+        return {
+            "current": {"temperature": 25, "humidity": 60, "weather_code": 0, "wind_speed": 10, "visibility": 10000},
+            "hourly": [],
+            "daily": []
+        }
+
 # ============== PUBLIC ROUTES ==============
 
 @api_router.get("/")
