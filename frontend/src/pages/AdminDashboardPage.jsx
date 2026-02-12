@@ -1182,6 +1182,31 @@ export default function AdminDashboardPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* QR Code Dialog */}
+      <Dialog open={qrDialogOpen} onOpenChange={setQrDialogOpen}>
+        <DialogContent className="max-w-sm rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <QrCode className="w-5 h-5" /> QR Code - {qrTitle}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center py-6">
+            <div className="bg-white p-4 rounded-xl shadow-sm border">
+              <QRCodeSVG id="qr-code-svg" value={qrUrl} size={200} level="H" />
+            </div>
+            <p className="text-xs text-slate-500 mt-4 text-center break-all max-w-full px-4">{qrUrl}</p>
+          </div>
+          <div className="flex justify-center gap-2">
+            <Button variant="outline" onClick={() => copyToClipboard(qrUrl)}>
+              <Copy className="w-4 h-4 mr-2" /> Copia Link
+            </Button>
+            <Button onClick={downloadQrCode} className="bg-amber-500 hover:bg-amber-600">
+              Scarica PNG
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
