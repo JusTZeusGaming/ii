@@ -1,34 +1,165 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
+/* Guest Portal App Styles */
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
+.app-container {
+    max-width: 430px;
+    margin: 0 auto;
     min-height: 100vh;
+    background-color: #F8FAFC;
+    position: relative;
+}
+
+/* Bottom Navigation */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 430px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid #E2E8F0;
+    padding: 12px 24px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 8px));
+    z-index: 50;
+}
+
+/* Page transitions */
+.page-enter {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.page-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+.page-exit {
+    opacity: 1;
+}
+
+.page-exit-active {
+    opacity: 0;
+    transition: opacity 150ms ease-in;
+}
+
+/* Horizontal scroll container */
+.horizontal-scroll {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
+    gap: 12px;
+    overflow-x: auto;
+    padding: 4px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroll > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+}
+
+/* Card hover effects */
+.interactive-card {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+
+.interactive-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.interactive-card:active {
+    transform: scale(0.98);
+}
+
+/* Splash screen */
+.splash-bg {
+    background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);
+}
+
+/* Filter pills */
+.filter-pill {
+    transition: all 0.15s ease-out;
+}
+
+.filter-pill.active {
+    background-color: #0F172A;
     color: white;
 }
 
-.App-link {
-    color: #61dafb;
+/* WhatsApp button */
+.whatsapp-btn {
+    background-color: #25D366;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
+.whatsapp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(37, 211, 102, 0.4);
+}
+
+/* Image cards */
+.image-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.image-card img {
+    transition: transform 0.3s ease-out;
+}
+
+.image-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Badge styles */
+.badge-recommended {
+    background-color: #F59E0B;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Content area with bottom nav spacing */
+.content-area {
+    padding-bottom: 100px;
+}
+
+/* Form styles */
+.form-input {
+    background-color: #F1F5F9;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 16px;
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+
+.form-input:focus {
+    background-color: white;
+    border-color: #0F172A;
+    outline: none;
+}
+
+/* Loading skeleton */
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
     }
-    to {
-        transform: rotate(360deg);
+    100% {
+        background-position: 200% 0;
     }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
 }
