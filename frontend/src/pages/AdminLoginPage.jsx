@@ -14,15 +14,15 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 export default function AdminLoginPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: ""
   });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.username || !formData.password) {
-      toast.error("Inserisci username e password");
+    if (!formData.email || !formData.password) {
+      toast.error("Inserisci email e password");
       return;
     }
 
@@ -30,7 +30,8 @@ export default function AdminLoginPage() {
     try {
       const response = await axios.post(`${API}/admin/login`, formData);
       localStorage.setItem("admin_token", response.data.token);
-      localStorage.setItem("admin_username", response.data.username);
+      localStorage.setItem("admin_email", response.data.email);
+      localStorage.setItem("admin_name", response.data.name || "Admin");
       toast.success("Accesso effettuato!");
       navigate("/admin/dashboard");
     } catch (error) {
@@ -66,15 +67,15 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                value={formData.username}
-                onChange={(e) => setFormData({...formData, username: e.target.value})}
-                placeholder="admin"
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                placeholder="admin@email.com"
                 className="rounded-xl"
-                data-testid="admin-username-input"
+                data-testid="admin-email-input"
               />
             </div>
 
