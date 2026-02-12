@@ -1,7 +1,8 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
+import { useProperty } from "@/context/PropertyContext";
 import { 
   Home, 
   Umbrella, 
