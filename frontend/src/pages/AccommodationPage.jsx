@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,13 +18,12 @@ import {
   Wrench,
   HelpCircle,
   ChevronLeft,
-  MessageCircle
+  ChevronRight,
+  Sparkles
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const WHATSAPP_NUMBER = "393293236473";
 
 export default function AccommodationPage() {
   const navigate = useNavigate();
@@ -46,11 +45,6 @@ export default function AccommodationPage() {
     };
     fetchProperty();
   }, [struttura]);
-
-  const openWhatsApp = (message = "") => {
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.open(url, "_blank");
-  };
 
   if (loading) {
     return (
@@ -181,7 +175,7 @@ export default function AccommodationPage() {
               <h3 className="text-lg font-semibold text-slate-900">Regole della casa</h3>
             </div>
             <ul className="space-y-2">
-              {property.house_rules.map((rule, index) => (
+              {property.house_rules?.map((rule, index) => (
                 <li key={index} className="flex items-start gap-2 text-slate-600 text-sm">
                   <span className="text-amber-500 mt-0.5">•</span>
                   {rule}
@@ -214,7 +208,7 @@ export default function AccommodationPage() {
                   {property.host_phone}
                 </a>
               </div>
-              {property.emergency_contacts.map((contact, index) => (
+              {property.emergency_contacts?.map((contact, index) => (
                 <div key={index} className="flex justify-between items-center">
                   <span className="text-slate-500">{contact.name}</span>
                   <a 
@@ -229,30 +223,55 @@ export default function AccommodationPage() {
           </Card>
         </motion.div>
 
-        {/* Assistance Card */}
+        {/* Troubleshooting Card - Clickable */}
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
         >
-          <Card className="p-5 rounded-2xl bg-white border border-slate-100" data-testid="assistance-card">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
-                <Wrench className="w-5 h-5 text-rose-600" />
+          <Card 
+            className="p-5 rounded-2xl bg-white border border-slate-100 cursor-pointer interactive-card"
+            onClick={() => navigate(`/assistenza?struttura=${struttura}`)}
+            data-testid="assistance-card"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
+                  <Wrench className="w-5 h-5 text-rose-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Guasti & Assistenza</h3>
+                  <p className="text-slate-500 text-sm">Soluzioni rapide e ticket supporto</p>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Guasti / Assistenza</h3>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
             </div>
-            <p className="text-slate-600 text-sm mb-4">
-              Hai un problema con l'alloggio? Contattaci subito su WhatsApp.
-            </p>
-            <Button
-              onClick={() => openWhatsApp(`Ciao, ho un problema con l'alloggio ${property.name}`)}
-              className="w-full whatsapp-btn text-white rounded-xl py-3 font-semibold"
-              data-testid="whatsapp-assistance-btn"
-            >
-              <MessageCircle className="w-5 h-5 mr-2" />
-              Scrivi su WhatsApp
-            </Button>
+          </Card>
+        </motion.div>
+
+        {/* Extra Services Card - Clickable */}
+        <motion.div
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.65 }}
+        >
+          <Card 
+            className="p-5 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 cursor-pointer interactive-card"
+            onClick={() => navigate(`/servizi-extra?struttura=${struttura}`)}
+            data-testid="extra-services-card"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Servizi Aggiuntivi</h3>
+                  <p className="text-slate-500 text-sm">Pulizia, biancheria, check-in romantico...</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-amber-600" />
+            </div>
           </Card>
         </motion.div>
 
@@ -267,12 +286,15 @@ export default function AccommodationPage() {
               <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
                 <HelpCircle className="w-5 h-5 text-slate-600" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">FAQ Casa</h3>
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">FAQ Casa</h3>
+                <p className="text-slate-500 text-xs">{property.faq?.length || 0} risposte pronte</p>
+              </div>
             </div>
             <Accordion type="single" collapsible className="w-full">
-              {property.faq.map((item, index) => (
+              {property.faq?.slice(0, 10).map((item, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger className="text-left text-sm font-medium">
+                  <AccordionTrigger className="text-left text-sm font-medium hover:no-underline">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-slate-600 text-sm">
@@ -281,6 +303,11 @@ export default function AccommodationPage() {
                 </AccordionItem>
               ))}
             </Accordion>
+            {property.faq?.length > 10 && (
+              <p className="text-center text-sm text-slate-500 mt-4">
+                + altre {property.faq.length - 10} FAQ disponibili
+              </p>
+            )}
           </Card>
         </motion.div>
       </div>
