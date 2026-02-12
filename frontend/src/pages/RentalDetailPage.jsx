@@ -314,14 +314,14 @@ export default function RentalDetailPage() {
                       onClick={() => setFormData({...formData, duration_type: "giornaliero"})}
                       className={`p-3 rounded-xl border-2 text-xs font-medium transition-all ${formData.duration_type === "giornaliero" ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
                     >
-                      Giornaliero (€{rental.daily_price}/g)
+                      Giornaliero ({String(rental.daily_price).startsWith('€') ? rental.daily_price : `€${rental.daily_price}`}/g)
                     </button>
                     <button 
                       type="button" 
                       onClick={() => setFormData({...formData, duration_type: "settimanale"})}
                       className={`p-3 rounded-xl border-2 text-xs font-medium transition-all ${formData.duration_type === "settimanale" ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200"}`}
                     >
-                      Settimanale (€{rental.weekly_price || rental.daily_price * 7})
+                      Settimanale ({rental.weekly_price ? (String(rental.weekly_price).startsWith('€') ? rental.weekly_price : `€${rental.weekly_price}`) : `€${parseFloat(String(rental.daily_price).replace('€', '')) * 7}`})
                     </button>
                   </div>
                 </div>
