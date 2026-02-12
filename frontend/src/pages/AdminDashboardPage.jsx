@@ -226,7 +226,8 @@ export default function AdminDashboardPage() {
       restaurants: "restaurants",
       experiences: "experiences",
       rentals: "rentals",
-      guestBookings: "guest-bookings"
+      guestBookings: "guest-bookings",
+      mapInfo: "map-info"
     };
 
     try {
