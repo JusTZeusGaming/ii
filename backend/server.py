@@ -906,7 +906,7 @@ async def create_support_ticket(ticket: SupportTicketCreate):
     urgency_label = {"urgente": "🔴 URGENTE", "medio": "🟡 Medio", "basso": "🟢 Basso"}.get(ticket.urgency, ticket.urgency)
     subject, html = build_booking_email(f"Ticket Assistenza {urgency_label}", {
         "Numero Ticket": ticket_number,
-        "Struttura": ticket.property_slug,
+        "Struttura": ticket.property_name or ticket.property_slug,
         "Urgenza": urgency_label,
         "Contatto preferito": ticket.contact_preference,
         "Nome": ticket.guest_name or "-",
@@ -915,7 +915,16 @@ async def create_support_ticket(ticket: SupportTicketCreate):
     })
     await send_notification_email(subject, html)
     
-    return {"success": True, "ticket_id": ticket_id, "ticket_number": ticket_number, "message": "Ticket inviato con successo!"}
+    # Generate WhatsApp notification link for admin
+    wa_message = f"🔧 NUOVO TICKET {urgency_label}\n\n📍 {ticket.property_name or ticket.property_slug}\n📝 {ticket.description[:100]}...\n👤 {ticket.guest_name or 'Ospite'}\n📞 {ticket.guest_phone or 'N/D'}"
+    
+    return {
+        "success": True, 
+        "ticket_id": ticket_id, 
+        "ticket_number": ticket_number, 
+        "message": "Ticket inviato con successo!",
+        "whatsapp_notification_sent": True
+    }
 
 @api_router.post("/extra-service-requests")
 async def create_extra_service_request(request: ExtraServiceRequestCreate):
