@@ -104,18 +104,31 @@ class PropertyBase(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     slug: str
+    # WiFi
     wifi_name: str = ""
     wifi_password: str = ""
+    wifi_notes: str = ""
+    # Check-in/out
     checkin_time: str = ""
     checkin_instructions: str = ""
     checkout_time: str = ""
     checkout_instructions: str = ""
+    # Rules
     house_rules: List[str] = []
+    # Host contacts
     host_name: str = ""
     host_phone: str = ""
-    emergency_contacts: List[dict] = []
-    faq: List[dict] = []
+    host_email: str = ""
+    emergency_contacts: List[dict] = []  # [{name, phone, role}]
+    # FAQ - personalizzabili per struttura
+    faq: List[dict] = []  # [{question, answer, enabled}]
+    # Guasti/Problemi comuni - personalizzabili per struttura
+    common_issues: List[dict] = []  # [{title, solution, category}]
+    # Servizi extra - personalizzabili per struttura
+    extra_services: List[dict] = []  # [{name, description, price, enabled}]
+    # Image
     image_url: Optional[str] = None
+    # Metadata
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class PropertyCreate(BaseModel):
@@ -123,6 +136,7 @@ class PropertyCreate(BaseModel):
     slug: str
     wifi_name: str = ""
     wifi_password: str = ""
+    wifi_notes: str = ""
     checkin_time: str = ""
     checkin_instructions: str = ""
     checkout_time: str = ""
@@ -130,8 +144,11 @@ class PropertyCreate(BaseModel):
     house_rules: List[str] = []
     host_name: str = ""
     host_phone: str = ""
+    host_email: str = ""
     emergency_contacts: List[dict] = []
     faq: List[dict] = []
+    common_issues: List[dict] = []
+    extra_services: List[dict] = []
     image_url: Optional[str] = None
 
 class GuestBooking(BaseModel):
