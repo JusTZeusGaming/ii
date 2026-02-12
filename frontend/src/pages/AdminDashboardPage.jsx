@@ -985,16 +985,10 @@ export default function AdminDashboardPage() {
                         </TableRow>
                       );
                     })}
-                              <Trash2 className="w-4 h-4 text-red-500" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
                     {data.properties.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center text-slate-500 py-8">
-                          Nessuna struttura. Clicca "Aggiungi" per crearne una.
+                        <TableCell colSpan={6} className="text-center text-slate-500 py-8">
+                          Nessuna struttura. Clicca "Nuova struttura" per crearne una.
                         </TableCell>
                       </TableRow>
                     )}
