@@ -507,6 +507,7 @@ export default function AdminDashboardPage() {
     { id: "restaurants", label: "Ristoranti", icon: Utensils },
     { id: "experiences", label: "Esperienze", icon: CompassIcon },
     { id: "rentals", label: "Noleggi", icon: Bike },
+    { id: "mapInfo", label: "Mappe & Info", icon: Compass },
   ];
 
   // Calculate total requests count
