@@ -76,14 +76,16 @@ export default function RentalDetailPage() {
     if (!rental) return "€0";
     
     const days = calculateDays();
+    const dailyPrice = parseFloat(rental.daily_price) || 0;
+    const weeklyPrice = parseFloat(rental.weekly_price) || dailyPrice * 7;
     let basePrice = 0;
     
     if (formData.duration_type === "settimanale" && rental.weekly_price && days >= 7) {
       const weeks = Math.floor(days / 7);
       const extraDays = days % 7;
-      basePrice = (weeks * rental.weekly_price) + (extraDays * rental.daily_price);
+      basePrice = (weeks * weeklyPrice) + (extraDays * dailyPrice);
     } else {
-      basePrice = days * rental.daily_price;
+      basePrice = days * dailyPrice;
     }
     
     let extras = 0;
@@ -97,9 +99,11 @@ export default function RentalDetailPage() {
   const calculateTotalNumeric = () => {
     if (!rental) return 0;
     const days = calculateDays();
+    const dailyPrice = parseFloat(rental.daily_price) || 0;
+    const weeklyPrice = parseFloat(rental.weekly_price) || dailyPrice * 7;
     let basePrice = formData.duration_type === "settimanale" && rental.weekly_price && days >= 7
-      ? Math.floor(days / 7) * rental.weekly_price + (days % 7) * rental.daily_price
-      : days * rental.daily_price;
+      ? Math.floor(days / 7) * weeklyPrice + (days % 7) * dailyPrice
+      : days * dailyPrice;
     if (formData.delivery) basePrice += 5;
     if (formData.pickup) basePrice += 5;
     return basePrice;
