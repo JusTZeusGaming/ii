@@ -482,6 +482,34 @@ export default function AdminDashboardPage() {
       );
     }
 
+    if (dialogType === "mapInfo") {
+      return (
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          <div><Label>Nome *</Label><Input value={formData.name || ""} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Es. Parcheggio Torre Lapillo" /></div>
+          <div><Label>Descrizione</Label><Textarea value={formData.description || ""} onChange={(e) => setFormData({...formData, description: e.target.value})} rows={2} placeholder="Descrizione breve" /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Categoria *</Label>
+              <select className="w-full p-2 border rounded-lg text-sm" value={formData.category || "parcheggi"} onChange={(e) => setFormData({...formData, category: e.target.value})}>
+                <option value="parcheggi">Parcheggi</option>
+                <option value="farmacie">Farmacie</option>
+                <option value="guardia_medica">Guardia Medica</option>
+                <option value="pronto_soccorso">Pronto Soccorso</option>
+                <option value="trasporti">Trasporti</option>
+                <option value="supermercati">Supermercati</option>
+                <option value="edicole">Edicole/Tabacchi</option>
+                <option value="bancomat">Bancomat</option>
+                <option value="altro">Altro</option>
+              </select>
+            </div>
+            <div><Label>Telefono</Label><Input value={formData.phone || ""} onChange={(e) => setFormData({...formData, phone: e.target.value})} placeholder="+39 0832..." /></div>
+          </div>
+          <div><Label>Orari</Label><Input value={formData.hours || ""} onChange={(e) => setFormData({...formData, hours: e.target.value})} placeholder="Es. 8:00-20:00 (chiuso domenica)" /></div>
+          <div><Label>Note</Label><Textarea value={formData.notes || ""} onChange={(e) => setFormData({...formData, notes: e.target.value})} rows={2} placeholder="Informazioni aggiuntive" /></div>
+          <div><Label>URL Mappa (Google Maps)</Label><Input value={formData.map_url || ""} onChange={(e) => setFormData({...formData, map_url: e.target.value})} placeholder="https://maps.google.com/..." /></div>
+        </div>
+      );
+    }
+
     return null;
   };
 
