@@ -1231,6 +1231,22 @@ export default function AdminDashboardPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Property Editor Modal */}
+      {propertyEditorOpen && (
+        <PropertyEditor 
+          property={editingProperty}
+          onSave={() => {
+            setPropertyEditorOpen(false);
+            setEditingProperty(null);
+            fetchAllData();
+          }}
+          onClose={() => {
+            setPropertyEditorOpen(false);
+            setEditingProperty(null);
+          }}
+        />
+      )}
     </div>
   );
 }
