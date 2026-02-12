@@ -41,12 +41,18 @@ import {
   Clock,
   AlertTriangle,
   Users,
-  Moon
+  Moon,
+  QrCode,
+  MessageCircle,
+  Send,
+  ExternalLink
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { QRCodeSVG } from "qrcode.react";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const WHATSAPP_NUMBER = "+393293236473";
 
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("admin_token")}`
