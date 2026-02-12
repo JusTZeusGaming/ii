@@ -281,6 +281,10 @@ class RentalBase(BaseModel):
     rules: str = ""
     image_url: str = ""
     category: str = "mare"
+    # Auto-confirm settings
+    auto_confirm: bool = False  # If true, auto-confirm when available
+    total_quantity: int = 1  # Total items available per day
+    # Booked dates tracking (will be populated from bookings)
 
 class RentalCreate(BaseModel):
     name: str
