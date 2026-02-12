@@ -600,6 +600,45 @@ async def get_property(slug: str):
         raise HTTPException(status_code=404, detail="Property not found")
     return prop
 
+@api_router.get("/troubleshooting")
+async def get_troubleshooting(property_slug: str = None):
+    """Get troubleshooting issues - property-specific if slug provided"""
+    if property_slug:
+        # Try to get property-specific issues
+        prop = await db.properties.find_one({"slug": property_slug}, {"_id": 0})
+        if prop and prop.get("common_issues"):
+            return prop["common_issues"]
+    
+    # Return generic troubleshooting
+    generic_issues = [
+        {"id": "1", "title": "L'aria condizionata non funziona", "category": "clima", 
+         "solution": "1. Verificare che sia collegata alla corrente\n2. Controllare il telecomando (batterie)\n3. Impostare temperatura sotto i 25°C\n4. Attendere 5 minuti"},
+        {"id": "2", "title": "Non c'è acqua calda", "category": "acqua",
+         "solution": "1. Verificare che lo scaldabagno sia acceso\n2. Attendere 15-20 minuti\n3. Controllare il rubinetto principale"},
+        {"id": "3", "title": "Il WiFi non funziona", "category": "tecnologia",
+         "solution": "1. Verificare di essere connessi alla rete corretta\n2. Controllare la password\n3. Riavviare il router (staccare e riattaccare)"},
+        {"id": "4", "title": "La TV non si accende", "category": "tecnologia",
+         "solution": "1. Verificare che sia collegata alla corrente\n2. Controllare il telecomando (batterie)\n3. Premere il pulsante sul TV"},
+        {"id": "5", "title": "Scarico del bagno intasato", "category": "acqua",
+         "solution": "1. Non gettare carta in eccesso\n2. Usare lo sturalavandino se disponibile\n3. Contattaci se il problema persiste"}
+    ]
+    return generic_issues
+
+@api_router.get("/extra-services/{property_slug}")
+async def get_extra_services(property_slug: str):
+    """Get extra services available for a specific property"""
+    prop = await db.properties.find_one({"slug": property_slug}, {"_id": 0})
+    if prop and prop.get("extra_services"):
+        return [s for s in prop["extra_services"] if s.get("enabled", True)]
+    
+    # Return default services
+    return [
+        {"id": "1", "name": "Colazione in camera", "description": "Cornetti, caffè, succo", "price": "€15/persona", "enabled": True},
+        {"id": "2", "name": "Pulizia extra", "description": "Pulizia appartamento durante il soggiorno", "price": "€40", "enabled": True},
+        {"id": "3", "name": "Late check-out", "description": "Check-out fino alle 14:00", "price": "€30", "enabled": True},
+        {"id": "4", "name": "Early check-in", "description": "Check-in dalle 10:00", "price": "€30", "enabled": True}
+    ]
+
 @api_router.get("/beaches")
 async def get_beaches():
     beaches = await db.beaches.find({}, {"_id": 0}).to_list(100)
