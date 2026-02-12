@@ -78,6 +78,10 @@ export default function AdminDashboardPage() {
   const [dialogType, setDialogType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({});
+  
+  // Property Editor state
+  const [propertyEditorOpen, setPropertyEditorOpen] = useState(false);
+  const [editingProperty, setEditingProperty] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
