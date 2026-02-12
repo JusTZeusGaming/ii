@@ -2,6 +2,7 @@ import "@/App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
+import { PropertyProvider } from "@/context/PropertyContext";
 
 // Pages
 import SplashPage from "@/pages/SplashPage";
@@ -63,7 +64,9 @@ function App() {
   return (
     <div className="app-container">
       <BrowserRouter>
-        <AnimatedRoutes />
+        <PropertyProvider>
+          <AnimatedRoutes />
+        </PropertyProvider>
       </BrowserRouter>
       <Toaster position="top-center" richColors />
     </div>
