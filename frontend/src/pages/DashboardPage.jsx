@@ -91,11 +91,10 @@ export default function DashboardPage() {
           data-testid="accommodation-card"
         >
           {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ 
-              backgroundImage: `url(${property?.image_url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800'})` 
-            }}
+          <img 
+            src={property?.image_url || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800'}
+            alt="Alloggio"
+            className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-slate-900/30" />
           
