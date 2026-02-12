@@ -45,6 +45,7 @@ function AnimatedRoutes() {
         <Route path="/ristoranti/:id" element={<AppLayout><RestaurantDetailPage /></AppLayout>} />
         <Route path="/attivita" element={<AppLayout><ActivitiesPage /></AppLayout>} />
         <Route path="/attivita/:id" element={<AppLayout><ExperienceDetailPage /></AppLayout>} />
+        <Route path="/nightlife" element={<AppLayout><NightlifePage /></AppLayout>} />
         <Route path="/noleggi" element={<AppLayout><RentalsPage /></AppLayout>} />
         <Route path="/noleggi/:id" element={<AppLayout><RentalDetailPage /></AppLayout>} />
         <Route path="/mappe" element={<AppLayout><MapsPage /></AppLayout>} />
