@@ -96,7 +96,7 @@ export default function AdminDashboardPage() {
   const fetchAllData = async () => {
     try {
       const headers = getAuthHeaders();
-      const [properties, beaches, restaurants, experiences, rentals, nightlifeEvents, guestBookings, allRequests] = await Promise.all([
+      const [properties, beaches, restaurants, experiences, rentals, nightlifeEvents, guestBookings, allRequests, mapInfo] = await Promise.all([
         axios.get(`${API}/admin/properties`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${API}/beaches`),
         axios.get(`${API}/restaurants`),
@@ -104,7 +104,8 @@ export default function AdminDashboardPage() {
         axios.get(`${API}/rentals`),
         axios.get(`${API}/nightlife-events`),
         axios.get(`${API}/admin/guest-bookings`, { headers }).catch(() => ({ data: [] })),
-        axios.get(`${API}/admin/all-requests`, { headers }).catch(() => ({ data: null }))
+        axios.get(`${API}/admin/all-requests`, { headers }).catch(() => ({ data: null })),
+        axios.get(`${API}/map-info`)
       ]);
       setData({
         properties: properties.data || [],
@@ -114,7 +115,8 @@ export default function AdminDashboardPage() {
         rentals: rentals.data || [],
         nightlifeEvents: nightlifeEvents.data || [],
         guestBookings: guestBookings.data || [],
-        allRequests: allRequests.data
+        allRequests: allRequests.data,
+        mapInfo: mapInfo.data || []
       });
     } catch (error) {
       if (error.response?.status === 401) {
