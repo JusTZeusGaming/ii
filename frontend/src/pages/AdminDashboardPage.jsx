@@ -1182,6 +1182,52 @@ export default function AdminDashboardPage() {
               </div>
             </Card>
           </TabsContent>
+
+          {/* Map Info Tab */}
+          <TabsContent value="mapInfo">
+            <Card className="p-4 rounded-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold">Gestione Mappe & Info ({data.mapInfo.length})</h2>
+                  <p className="text-sm text-slate-500">Parcheggi, farmacie, trasporti e punti di interesse</p>
+                </div>
+                <Button onClick={() => openDialog("mapInfo")} size="sm" data-testid="add-mapinfo-btn">
+                  <Plus className="w-4 h-4 mr-2" /> Aggiungi
+                </Button>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Categoria</TableHead>
+                      <TableHead>Telefono</TableHead>
+                      <TableHead>Orari</TableHead>
+                      <TableHead className="text-right">Azioni</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {data.mapInfo.map((info) => (
+                      <TableRow key={info.id}>
+                        <TableCell className="font-medium">{info.name}</TableCell>
+                        <TableCell className="capitalize">{info.category}</TableCell>
+                        <TableCell>{info.phone || "-"}</TableCell>
+                        <TableCell>{info.hours || "-"}</TableCell>
+                        <TableCell className="text-right">
+                          <Button variant="ghost" size="sm" onClick={() => openDialog("mapInfo", info)}>
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete("mapInfo", info.id)}>
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </Card>
+          </TabsContent>
         </Tabs>
       </main>
 
