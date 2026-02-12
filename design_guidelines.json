@@ -1,0 +1,123 @@
+{
+  "project_name": "Your Journey - Guest Portal Torre Lapillo",
+  "design_philosophy": {
+    "core_concept": "Modern Coastal Utility",
+    "vibe": "Functional, Clean, Welcoming, Premium but Accessible",
+    "principles": [
+      "Mobile-First: All designs must be optimized for iPhone 13/14/15 viewports first.",
+      "App-Like Feel: No 'website' scrolling. Use fixed headers/footers and scrollable content areas.",
+      "Card-Based UI: Content is chunked into digestible cards with generous padding.",
+      "Navigation: Bottom tab bar is the primary navigation method.",
+      "Visuals: High-quality imagery with rounded corners, paired with crisp typography."
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Manrope, sans-serif",
+      "body": "Public Sans, sans-serif"
+    },
+    "installation": "Import from Google Fonts: https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Public+Sans:wght@300;400;500;600&display=swap",
+    "scale": {
+      "h1": "text-3xl font-bold tracking-tight text-primary",
+      "h2": "text-2xl font-bold tracking-tight text-primary",
+      "h3": "text-xl font-semibold tracking-tight text-primary",
+      "body": "text-base font-normal text-muted-foreground leading-relaxed",
+      "small": "text-sm font-medium text-muted-foreground/80",
+      "label": "text-xs font-bold uppercase tracking-wider text-muted-foreground/70"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "name": "Navy Blue",
+        "hex": "#0F172A",
+        "tailwind": "bg-slate-900 text-slate-50"
+      },
+      "secondary": {
+        "name": "Sand Yellow",
+        "hex": "#F59E0B",
+        "tailwind": "bg-amber-500 text-white"
+      },
+      "background": {
+        "name": "Coastal Mist",
+        "hex": "#F8FAFC",
+        "tailwind": "bg-slate-50"
+      },
+      "surface": {
+        "name": "Pure White",
+        "hex": "#FFFFFF",
+        "tailwind": "bg-white"
+      },
+      "muted": {
+        "name": "Sea Foam Grey",
+        "hex": "#F1F5F9",
+        "tailwind": "bg-slate-100"
+      }
+    },
+    "usage_rules": [
+      "Use Navy Blue (#0F172A) for all primary text and active states.",
+      "Use Sand Yellow (#F59E0B) sparingly for accents, icons, and 'Recommended' badges.",
+      "Backgrounds should be Off-White (#F8FAFC) to reduce eye strain.",
+      "Cards must be Pure White (#FFFFFF) to pop against the background."
+    ]
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-slate-900 text-white hover:bg-slate-800 rounded-full px-8 py-3 font-semibold shadow-lg shadow-slate-900/20 transition-all active:scale-95",
+      "secondary": "bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 rounded-full px-6 py-2 font-medium transition-all active:scale-95",
+      "ghost": "text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg px-4 py-2 transition-colors"
+    },
+    "cards": {
+      "base": "bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden",
+      "interactive": "bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]"
+    },
+    "inputs": {
+      "base": "bg-slate-50 border-transparent focus:border-slate-900 focus:ring-0 rounded-xl px-4 py-3 text-slate-900 placeholder:text-slate-400 transition-all"
+    },
+    "navigation": {
+      "bottom_bar": "fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-slate-200 pb-safe pt-2 px-6 flex justify-between items-center z-50 h-20",
+      "tab_item": "flex flex-col items-center gap-1 text-xs font-medium transition-colors",
+      "tab_active": "text-slate-900",
+      "tab_inactive": "text-slate-400 hover:text-slate-600"
+    }
+  },
+  "layout": {
+    "container": "max-w-md mx-auto min-h-screen bg-slate-50 relative pb-24",
+    "spacing": {
+      "section": "py-8 px-6",
+      "card_internal": "p-5",
+      "grid_gap": "gap-4"
+    },
+    "grid_system": "grid grid-cols-1 gap-4"
+  },
+  "assets": {
+    "images": {
+      "hero_splash": "https://images.unsplash.com/photo-1574554916471-ec8c06eebfa9?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "accommodation_hero": "https://images.unsplash.com/photo-1757924461488-ef9ad0670978?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "beach_thumbnail_1": "https://images.unsplash.com/photo-1601151519703-043c46e10334?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "beach_thumbnail_2": "https://images.unsplash.com/photo-1592087095680-5f11023902a1?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "dining_hero": "https://images.unsplash.com/photo-1766668413632-da08d0302bf7?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "dining_thumbnail_1": "https://images.unsplash.com/photo-1750943082858-b3e60eaf8cc6?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "dining_thumbnail_2": "https://images.unsplash.com/photo-1764874299289-f07dd3015169?crop=entropy&cs=srgb&fm=jpg&q=85"
+    },
+    "icons": "Use Lucide React icons. Common ones: Home, Map, Umbrella, Utensils, Info, Phone, Heart, User, ChevronRight, Search, Filter."
+  },
+  "universal_guidelines": [
+    "Do not use gradients for backgrounds. Keep it flat and clean.",
+    "Ensure all touch targets are at least 44x44px.",
+    "Use 'Sonner' for all toast notifications.",
+    "All interactive elements must have a 'data-testid' attribute.",
+    "Avoid 'Lorem Ipsum'. Use realistic placeholder text related to Puglia/Torre Lapillo.",
+    "Images must have 'object-cover' and rounded corners.",
+    "Use 'framer-motion' for subtle page transitions (fade in/slide up)."
+  ],
+  "instructions_to_main_agent": [
+    "1. SETUP: Install 'framer-motion' and 'lucide-react' if not present.",
+    "2. ROUTING: Set up React Router with a layout that includes the BottomNavigation component (visible on all pages except Splash).",
+    "3. SPLASH: Create a Splash Screen that redirects to Dashboard after 2s or on click.",
+    "4. DASHBOARD: Implement a grid of 'Quick Action' cards (Wifi, Check-in) and a horizontal scroll of 'Discover' items.",
+    "5. PAGES: Build out the 8 required internal pages using the 'Card' component pattern.",
+    "6. DATA: Create a mock data file 'data.js' to hold the content for beaches, restaurants, etc., so it's easy to connect to a CMS later.",
+    "7. ADMIN: Create a simple Admin Login page (email/password) and a basic Admin Dashboard layout (table view of content)."
+  ]
+}
