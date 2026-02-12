@@ -294,7 +294,8 @@ export default function AdminDashboardPage() {
       restaurants: { name: "", description: "", category: "pesce", phone: "", map_url: "", image_url: "", is_recommended: false, price_range: "", hours: "" },
       experiences: { name: "", description: "", category: "barca", price_info: "", contact_phone: "", image_url: "", is_top: false, duration: "" },
       rentals: { name: "", description: "", daily_price: 0, weekly_price: null, rules: "", image_url: "", category: "mare" },
-      guestBookings: { property_id: "", property_slug: "", property_name: "", guest_name: "", guest_surname: "", num_guests: 1, room_number: "", checkin_date: "", checkout_date: "" }
+      guestBookings: { property_id: "", property_slug: "", property_name: "", guest_name: "", guest_surname: "", num_guests: 1, room_number: "", checkin_date: "", checkout_date: "" },
+      mapInfo: { name: "", description: "", category: "parcheggi", map_url: "", phone: "", hours: "", notes: "", icon: "map-pin" }
     };
     return forms[type] || {};
   };
