@@ -76,8 +76,19 @@ export default function RentalDetailPage() {
     if (!rental) return "€0";
     
     const days = calculateDays();
-    const dailyPrice = parseFloat(rental.daily_price) || 0;
-    const weeklyPrice = parseFloat(rental.weekly_price) || dailyPrice * 7;
+    // Handle both numeric and string prices (e.g., "€8" or 8)
+    const dailyPriceRaw = rental.daily_price;
+    const dailyPrice = typeof dailyPriceRaw === 'string' 
+      ? parseFloat(dailyPriceRaw.replace(/[^0-9.]/g, '')) || 0
+      : parseFloat(dailyPriceRaw) || 0;
+    
+    const weeklyPriceRaw = rental.weekly_price;
+    const weeklyPrice = weeklyPriceRaw
+      ? (typeof weeklyPriceRaw === 'string' 
+          ? parseFloat(weeklyPriceRaw.replace(/[^0-9.]/g, '')) || 0
+          : parseFloat(weeklyPriceRaw) || 0)
+      : dailyPrice * 7;
+    
     let basePrice = 0;
     
     if (formData.duration_type === "settimanale" && rental.weekly_price && days >= 7) {
@@ -99,8 +110,19 @@ export default function RentalDetailPage() {
   const calculateTotalNumeric = () => {
     if (!rental) return 0;
     const days = calculateDays();
-    const dailyPrice = parseFloat(rental.daily_price) || 0;
-    const weeklyPrice = parseFloat(rental.weekly_price) || dailyPrice * 7;
+    
+    const dailyPriceRaw = rental.daily_price;
+    const dailyPrice = typeof dailyPriceRaw === 'string' 
+      ? parseFloat(dailyPriceRaw.replace(/[^0-9.]/g, '')) || 0
+      : parseFloat(dailyPriceRaw) || 0;
+    
+    const weeklyPriceRaw = rental.weekly_price;
+    const weeklyPrice = weeklyPriceRaw
+      ? (typeof weeklyPriceRaw === 'string' 
+          ? parseFloat(weeklyPriceRaw.replace(/[^0-9.]/g, '')) || 0
+          : parseFloat(weeklyPriceRaw) || 0)
+      : dailyPrice * 7;
+    
     let basePrice = formData.duration_type === "settimanale" && rental.weekly_price && days >= 7
       ? Math.floor(days / 7) * weeklyPrice + (days % 7) * dailyPrice
       : days * dailyPrice;
