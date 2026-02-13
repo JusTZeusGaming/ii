@@ -5,22 +5,24 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const categories = [
-  { id: "all", label: "Tutti" },
-  { id: "pesce", label: "Pesce" },
-  { id: "carne", label: "Carne" },
-  { id: "pizzeria", label: "Pizzerie" },
-  { id: "colazione", label: "Colazione" },
-];
-
 export default function DiningPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
+
+  const categories = [
+    { id: "all", label: t("dining.all") },
+    { id: "pesce", label: t("dining.fish") },
+    { id: "carne", label: t("dining.meat") },
+    { id: "pizzeria", label: t("dining.pizza") },
+    { id: "colazione", label: t("dining.breakfast") },
+  ];
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -50,8 +52,8 @@ export default function DiningPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dove mangiare</h1>
-          <p className="text-slate-500 text-sm">I migliori ristoranti della zona</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("dining.title")}</h1>
+          <p className="text-slate-500 text-sm">{t("dining.subtitle")}</p>
         </div>
       </motion.div>
 
@@ -73,7 +75,7 @@ export default function DiningPage() {
       {/* Recommended Carousel */}
       {activeFilter === "all" && recommendedRestaurants.length > 0 && (
         <motion.div className="mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Consigliati</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">{t("dining.recommended")}</h3>
           <div className="horizontal-scroll">
             {recommendedRestaurants.map((restaurant) => (
               <Card 
@@ -83,7 +85,7 @@ export default function DiningPage() {
               >
                 <div className="relative h-36">
                   <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" />
-                  <span className="absolute top-2 right-2 badge-recommended">Consigliato</span>
+                  <span className="absolute top-2 right-2 badge-recommended">{t("recommended")}</span>
                 </div>
                 <div className="p-4">
                   <h4 className="font-semibold text-slate-900">{restaurant.name}</h4>
@@ -97,7 +99,7 @@ export default function DiningPage() {
                     <div className="flex">
                       {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 text-amber-400 fill-current" />)}
                     </div>
-                    <span className="text-xs text-amber-600 font-medium">Prenota →</span>
+                    <span className="text-xs text-amber-600 font-medium">{t("book")} →</span>
                   </div>
                 </div>
               </Card>
