@@ -53,7 +53,9 @@ import {
   MessageCircle,
   Send,
   ExternalLink,
-  Settings
+  Settings,
+  Bus,
+  Archive
 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
