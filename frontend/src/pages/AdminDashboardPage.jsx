@@ -112,15 +112,16 @@ export default function AdminDashboardPage() {
   const fetchAllData = async () => {
     try {
       const headers = getAuthHeaders();
-      const [properties, beaches, restaurants, experiences, rentals, nightlifeEvents, guestBookings, allRequests, mapInfo] = await Promise.all([
+      const [properties, beaches, restaurants, experiences, rentals, nightlifeEvents, transports, guestBookings, allRequests, mapInfo] = await Promise.all([
         axios.get(`${API}/admin/properties`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${API}/beaches`),
         axios.get(`${API}/restaurants`),
         axios.get(`${API}/experiences`),
         axios.get(`${API}/rentals`),
         axios.get(`${API}/nightlife-events`),
+        axios.get(`${API}/admin/transports`, { headers }).catch(() => ({ data: [] })),
         axios.get(`${API}/admin/guest-bookings`, { headers }).catch(() => ({ data: [] })),
-        axios.get(`${API}/admin/all-requests`, { headers }).catch(() => ({ data: null })),
+        axios.get(`${API}/admin/all-requests?show_archived=${showArchived}`, { headers }).catch(() => ({ data: null })),
         axios.get(`${API}/map-info`)
       ]);
       setData({
@@ -130,6 +131,7 @@ export default function AdminDashboardPage() {
         experiences: experiences.data || [],
         rentals: rentals.data || [],
         nightlifeEvents: nightlifeEvents.data || [],
+        transports: transports.data || [],
         guestBookings: guestBookings.data || [],
         allRequests: allRequests.data,
         mapInfo: mapInfo.data || []
