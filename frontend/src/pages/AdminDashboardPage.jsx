@@ -728,6 +728,19 @@ export default function AdminDashboardPage() {
           {/* Requests Tab - All bookings and tickets */}
           <TabsContent value="requests">
             <div className="space-y-6">
+              {/* Archive Toggle */}
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Tutte le richieste</h2>
+                <Button
+                  variant={showArchived ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => { setShowArchived(!showArchived); setTimeout(fetchAllData, 100); }}
+                  data-testid="toggle-archived"
+                >
+                  <Archive className="w-4 h-4 mr-2" />
+                  {showArchived ? "Nascondi archiviate" : "Mostra archiviate"}
+                </Button>
+              </div>
               {/* Support Tickets */}
               {data.allRequests?.support_tickets?.length > 0 && (
                 <Card className="p-4 rounded-2xl border-l-4 border-l-red-500">
