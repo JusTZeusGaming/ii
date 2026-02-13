@@ -204,22 +204,18 @@ export default function AdminDashboardPage() {
   const confirmAndNotify = async (collection, item, status) => {
     await updateRequestStatus(collection, item.id, status);
     
-    const statusLabels = {
-      confirmed: "Confermata",
-      cancelled: "Annullata",
-      resolved: "Risolta"
-    };
-    
     const customerPhone = item.guest_phone?.replace(/\s/g, "");
-    if (customerPhone && status !== "pending") {
+    if (customerPhone && status !== "pending" && status !== "open") {
+      const serviceName = item.rental_name || item.restaurant_name || item.experience_name || item.event_name || item.beach_name || item.service_type || "assistenza";
       const message = status === "confirmed" 
-        ? `✅ La tua richiesta "${item.rental_name || item.restaurant_name || item.experience_name || item.event_name || "assistenza"}" è stata CONFERMATA! Grazie per aver scelto Your Journey.`
+        ? `Ciao ${item.guest_name || ""}! La tua richiesta "${serviceName}" è stata CONFERMATA! Grazie per aver scelto Your Journey Torre Lapillo.`
         : status === "cancelled"
-        ? `❌ Purtroppo la tua richiesta non può essere confermata. Ti contatteremo presto.`
-        : `✅ Il tuo ticket è stato risolto!`;
+        ? `Ciao ${item.guest_name || ""}, purtroppo la tua richiesta "${serviceName}" non può essere confermata. Ti contatteremo presto per trovare un'alternativa.`
+        : `Ciao ${item.guest_name || ""}! Il tuo ticket di assistenza è stato risolto. Se hai bisogno di altro, non esitare a contattarci.`;
       
       if (window.confirm(`Vuoi inviare conferma WhatsApp al cliente (${customerPhone})?`)) {
-        window.open(`https://wa.me/${customerPhone.replace("+", "")}?text=${encodeURIComponent(message)}`, "_blank");
+        const phone = customerPhone.startsWith("+") ? customerPhone.substring(1) : customerPhone;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
       }
     }
   };
