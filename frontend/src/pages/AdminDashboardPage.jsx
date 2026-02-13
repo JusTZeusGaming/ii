@@ -346,7 +346,9 @@ export default function AdminDashboardPage() {
       experiences: { name: "", description: "", category: "barca", price_info: "", contact_phone: "", image_url: "", is_top: false, duration: "" },
       rentals: { name: "", description: "", daily_price: 0, weekly_price: null, rules: "", image_url: "", category: "mare" },
       guestBookings: { property_id: "", property_slug: "", property_name: "", guest_name: "", guest_surname: "", num_guests: 1, room_number: "", checkin_date: "", checkout_date: "" },
-      mapInfo: { name: "", description: "", category: "parcheggi", map_url: "", phone: "", hours: "", notes: "", icon: "map-pin" }
+      mapInfo: { name: "", description: "", category: "parcheggi", map_url: "", phone: "", hours: "", notes: "", icon: "map-pin" },
+      nightlife: { name: "", venue: "", date: "", time: "", dress_code: "", price_entry: "", price_with_transport: "", image_url: "", status: "available", min_participants: 4, pickup_points: [], notes: "" },
+      transports: { name: "", description: "", category: "ncc", contact_phone: "", price_info: "", min_participants: null, cancellation_policy: "" }
     };
     return forms[type] || {};
   };
