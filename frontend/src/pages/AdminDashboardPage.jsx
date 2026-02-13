@@ -667,10 +667,17 @@ export default function AdminDashboardPage() {
                             <TableCell>{ticket.contact_preference}</TableCell>
                             <TableCell>{getStatusBadge(ticket.status)}</TableCell>
                             <TableCell>
-                              <select className="text-xs border rounded p-1" value={ticket.status} onChange={(e) => updateRequestStatus("ticket", ticket.id, e.target.value)}>
-                                <option value="open">Aperto</option>
-                                <option value="resolved">Risolto</option>
-                              </select>
+                              <div className="flex items-center gap-1">
+                                <Select value={ticket.status} onValueChange={(val) => confirmAndNotify("ticket", ticket, val)}>
+                                  <SelectTrigger className="h-7 w-[110px] text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="open">Aperto</SelectItem>
+                                    <SelectItem value="resolved">Risolto</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
