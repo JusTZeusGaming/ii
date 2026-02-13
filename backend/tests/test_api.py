@@ -7,7 +7,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://beachstay-2.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://property-portal-app.preview.emergentagent.com')
 
 # Admin credentials
 ADMIN_EMAIL = "nico.suez2000@gmail.com"
