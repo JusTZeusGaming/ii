@@ -476,32 +476,31 @@ export default function AdminDashboardPage() {
           </div>
           <div>
             <Label>Struttura * ({data.properties?.length || 0} disponibili)</Label>
-            <select 
-              className="w-full p-2 border rounded-lg text-sm mt-1" 
-              value={formData.property_slug || ""} 
-              onChange={(e) => {
-                const selectedSlug = e.target.value;
-                const prop = data.properties.find(p => p.slug === selectedSlug);
-                console.log("Selected property:", prop);
+            <Select
+              value={formData.property_slug || ""}
+              onValueChange={(slug) => {
+                const prop = data.properties.find(p => p.slug === slug);
                 setFormData({
                   ...formData, 
-                  property_slug: selectedSlug, 
+                  property_slug: slug, 
                   property_id: prop?.id || "", 
                   property_name: prop?.name || ""
                 });
               }}
             >
-              <option value="">-- Seleziona struttura --</option>
-              {data.properties && data.properties.length > 0 ? (
-                data.properties.map(p => (
-                  <option key={p.id} value={p.slug}>{p.name} ({p.slug})</option>
-                ))
-              ) : (
-                <option value="" disabled>Nessuna struttura disponibile</option>
-              )}
-            </select>
+              <SelectTrigger className="w-full mt-1" data-testid="property-select-trigger">
+                <SelectValue placeholder="-- Seleziona struttura --" />
+              </SelectTrigger>
+              <SelectContent>
+                {data.properties.map(p => (
+                  <SelectItem key={p.id} value={p.slug} data-testid={`property-option-${p.slug}`}>
+                    {p.name} ({p.slug})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {data.properties?.length === 0 && (
-              <p className="text-xs text-red-500 mt-1">⚠️ Nessuna struttura trovata. Crea prima una struttura nella tab "Strutture".</p>
+              <p className="text-xs text-red-500 mt-1">Nessuna struttura trovata. Crea prima una struttura nella tab "Strutture".</p>
             )}
           </div>
           <div className="grid grid-cols-2 gap-3">
