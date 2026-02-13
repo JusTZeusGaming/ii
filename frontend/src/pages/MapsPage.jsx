@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/context/LanguageContext";
 import { 
   ChevronLeft, 
   ExternalLink,
