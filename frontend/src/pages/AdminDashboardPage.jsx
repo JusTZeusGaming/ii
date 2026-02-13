@@ -209,18 +209,49 @@ export default function AdminDashboardPage() {
     await updateRequestStatus(collection, item.id, status);
     
     const customerPhone = item.guest_phone?.replace(/\s/g, "");
-    if (customerPhone && status !== "pending" && status !== "open") {
-      const serviceName = item.rental_name || item.restaurant_name || item.experience_name || item.event_name || item.beach_name || item.service_type || "assistenza";
+    const customerEmail = item.guest_email;
+    const serviceName = item.rental_name || item.restaurant_name || item.experience_name || item.event_name || item.beach_name || item.service_type || "assistenza";
+    
+    if (status !== "pending" && status !== "open") {
       const message = status === "confirmed" 
         ? `Ciao ${item.guest_name || ""}! La tua richiesta "${serviceName}" è stata CONFERMATA! Grazie per aver scelto Your Journey Torre Lapillo.`
         : status === "cancelled"
         ? `Ciao ${item.guest_name || ""}, purtroppo la tua richiesta "${serviceName}" non può essere confermata. Ti contatteremo presto per trovare un'alternativa.`
         : `Ciao ${item.guest_name || ""}! Il tuo ticket di assistenza è stato risolto. Se hai bisogno di altro, non esitare a contattarci.`;
       
-      if (window.confirm(`Vuoi inviare conferma WhatsApp al cliente (${customerPhone})?`)) {
-        const phone = customerPhone.startsWith("+") ? customerPhone.substring(1) : customerPhone;
-        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+      // Send email if available
+      if (customerEmail) {
+        try {
+          await axios.post(`${API}/admin/send-guest-email`, {
+            guest_email: customerEmail,
+            guest_name: item.guest_name || "",
+            service_name: serviceName,
+            status: status
+          }, { headers: getAuthHeaders() });
+          toast.success(`Email inviata a ${customerEmail}`);
+        } catch {
+          toast.error("Errore invio email. Prova con WhatsApp.");
+        }
       }
+      
+      // Prompt WhatsApp
+      if (customerPhone) {
+        if (window.confirm(`Vuoi inviare anche conferma WhatsApp al cliente (${customerPhone})?`)) {
+          const phone = customerPhone.startsWith("+") ? customerPhone.substring(1) : customerPhone;
+          window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+        }
+      }
+    }
+  };
+
+  // Archive request
+  const archiveRequest = async (collection, requestId) => {
+    try {
+      await axios.put(`${API}/admin/archive-request/${collection}/${requestId}`, {}, { headers: getAuthHeaders() });
+      toast.success("Richiesta archiviata");
+      fetchAllData();
+    } catch {
+      toast.error("Errore archiviazione");
     }
   };
 
