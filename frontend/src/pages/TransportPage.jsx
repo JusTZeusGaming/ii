@@ -163,7 +163,7 @@ export default function TransportPage() {
                               href={`tel:${transport.contact_phone}`}
                               className="text-sm text-slate-600 hover:text-slate-900"
                             >
-                              Chiama
+                              {t("call")}
                             </a>
                           </div>
                         </div>
