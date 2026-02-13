@@ -5,23 +5,25 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Star, ChevronRight, MessageCircle, Moon, Music } from "lucide-react";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 const WHATSAPP_NUMBER = "393293236473";
 
-const categories = [
-  { id: "all", label: "Tutte" },
-  { id: "barca", label: "Barca" },
-  { id: "escursioni", label: "Escursioni" },
-  { id: "nightlife", label: "Nightlife" },
-  { id: "borghi", label: "Borghi" },
-];
-
 export default function ActivitiesPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [experiences, setExperiences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
+
+  const categories = [
+    { id: "all", label: t("activities.all") },
+    { id: "barca", label: t("activities.boat") },
+    { id: "escursioni", label: t("activities.excursions") },
+    { id: "nightlife", label: t("activities.nightlife") },
+    { id: "borghi", label: t("activities.villages") },
+  ];
 
   useEffect(() => {
     const fetchExperiences = async () => {
@@ -55,8 +57,8 @@ export default function ActivitiesPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Cosa fare oggi</h1>
-          <p className="text-slate-500 text-sm">Esperienze e attività</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("activities.title")}</h1>
+          <p className="text-slate-500 text-sm">{t("activities.subtitle")}</p>
         </div>
       </motion.div>
 
@@ -94,8 +96,8 @@ export default function ActivitiesPage() {
                 <Music className="w-6 h-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-white">Nightlife & Discoteche</h3>
-                <p className="text-white/80 text-sm">Eventi, navetta inclusa, zero pensieri</p>
+                <h3 className="font-bold text-white">{t("activities.nightlifeBanner")}</h3>
+                <p className="text-white/80 text-sm">{t("activities.nightlifeDesc")}</p>
               </div>
               <ChevronRight className="w-5 h-5 text-white/60" />
             </div>
@@ -106,7 +108,7 @@ export default function ActivitiesPage() {
       {/* Top Experiences Carousel */}
       {activeFilter === "all" && topExperiences.length > 0 && (
         <motion.div className="mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Top Esperienze</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">{t("activities.topExperiences")}</h3>
           <div className="horizontal-scroll">
             {topExperiences.map((exp) => (
               <Card 
@@ -128,7 +130,7 @@ export default function ActivitiesPage() {
                   <p className="text-sm text-slate-500 line-clamp-2">{exp.description}</p>
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-amber-600 font-semibold text-sm">{exp.price_info}</span>
-                    <span className="text-xs text-amber-600 font-medium">Dettagli →</span>
+                    <span className="text-xs text-amber-600 font-medium">{t("details")} →</span>
                   </div>
                 </div>
               </Card>
@@ -168,7 +170,7 @@ export default function ActivitiesPage() {
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-amber-600 font-semibold text-xs">{exp.price_info}</span>
                     <span className="text-xs text-amber-600 font-medium flex items-center gap-1">
-                      Prenota <ChevronRight className="w-3 h-3" />
+                      {t("book")} <ChevronRight className="w-3 h-3" />
                     </span>
                   </div>
                 </div>
@@ -181,10 +183,10 @@ export default function ActivitiesPage() {
       {/* CTA */}
       <motion.div className="mt-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.5 }}>
         <Card className="p-5 rounded-2xl bg-slate-900 text-white">
-          <h3 className="font-semibold text-lg mb-2">Non trovi quello che cerchi?</h3>
-          <p className="text-slate-400 text-sm mb-4">Scrivici e ti aiuteremo a organizzare l'esperienza perfetta.</p>
+          <h3 className="font-semibold text-lg mb-2">{t("activities.notFound")}</h3>
+          <p className="text-slate-400 text-sm mb-4">{t("activities.notFoundDesc")}</p>
           <Button onClick={openWhatsApp} className="w-full whatsapp-btn text-white rounded-xl py-3 font-semibold">
-            <MessageCircle className="w-5 h-5 mr-2" /> Chiedi consigli
+            <MessageCircle className="w-5 h-5 mr-2" /> {t("activities.askAdvice")}
           </Button>
         </Card>
       </motion.div>
