@@ -368,6 +368,7 @@ class RentalBookingCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     start_date: str
     end_date: Optional[str] = ""
     duration_type: str = "giornaliero"
@@ -383,6 +384,7 @@ class RestaurantBookingCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     date: str
     time: str
     num_people: int = 2
@@ -395,6 +397,7 @@ class BeachBookingCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     date: str
     duration: str = "intera"
     row_preference: str = "indifferente"
@@ -409,6 +412,7 @@ class ExperienceBookingCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     date: str
     time: Optional[str] = ""
     num_people: int = 2
@@ -421,6 +425,7 @@ class NightlifeBookingCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     package: str = "entry_only"  # entry_only, entry_transport
     num_people: int = 1
     pickup_point: Optional[str] = ""
@@ -432,6 +437,7 @@ class TransportRequestCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     date: str
     time: Optional[str] = ""
     num_people: int = 1
@@ -456,6 +462,7 @@ class ExtraServiceRequestCreate(BaseModel):
     guest_name: str
     guest_surname: Optional[str] = ""
     guest_phone: str
+    guest_email: Optional[str] = ""
     date: str
     time: Optional[str] = ""
     notes: Optional[str] = ""
