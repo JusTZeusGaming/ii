@@ -81,8 +81,8 @@ export default function MapsPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Mappe & Info</h1>
-          <p className="text-slate-500 text-sm">Punti utili nella zona</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("maps.title")}</h1>
+          <p className="text-slate-500 text-sm">{t("maps.subtitle")}</p>
         </div>
       </motion.div>
 
