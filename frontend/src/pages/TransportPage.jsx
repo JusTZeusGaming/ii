@@ -15,23 +15,13 @@ import {
 import { ChevronLeft, Bus, Car, MapIcon, Calendar, Users, Check } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const categoryIcons = {
-  navette: Bus,
-  ncc: Car,
-  gite: MapIcon
-};
-
-const categoryLabels = {
-  navette: "Navette",
-  ncc: "NCC / Taxi",
-  gite: "Gite Giornaliere"
-};
-
 export default function TransportPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [transports, setTransports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -71,7 +61,7 @@ export default function TransportPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.guest_name || !formData.guest_phone || !formData.date || !formData.num_people || !formData.route) {
-      toast.error("Compila tutti i campi obbligatori");
+      toast.error(t("transport.fillRequired"));
       return;
     }
 
@@ -81,11 +71,11 @@ export default function TransportPage() {
         ...formData,
         num_people: parseInt(formData.num_people)
       });
-      toast.success("Richiesta inviata con successo! Ti contatteremo presto.");
+      toast.success(t("transport.requestSent"));
       setIsDialogOpen(false);
       setFormData({ guest_name: "", guest_phone: "", date: "", num_people: "", route: "", notes: "" });
     } catch (error) {
-      toast.error("Errore nell'invio della richiesta");
+      toast.error(t("error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -109,8 +99,8 @@ export default function TransportPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Senza auto</h1>
-          <p className="text-slate-500 text-sm">Trasporti e navette</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("transport.title")}</h1>
+          <p className="text-slate-500 text-sm">{t("transport.subtitle")}</p>
         </div>
       </motion.div>
 
@@ -126,7 +116,7 @@ export default function TransportPage() {
           data-testid="request-transport-btn"
         >
           <Car className="w-5 h-5 mr-2" />
-          Richiedi trasporto
+          {t("transport.requestTransport")}
         </Button>
       </motion.div>
 
@@ -192,13 +182,13 @@ export default function TransportPage() {
         <DialogContent className="max-w-sm mx-4 rounded-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
-              Richiedi trasporto
+              {t("transport.requestTransport")}
             </DialogTitle>
           </DialogHeader>
           
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="guest_name">Nome *</Label>
+              <Label htmlFor="guest_name">{t("name")} *</Label>
               <Input
                 id="guest_name"
                 value={formData.guest_name}
@@ -210,7 +200,7 @@ export default function TransportPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="guest_phone">Telefono *</Label>
+              <Label htmlFor="guest_phone">{t("phone")} *</Label>
               <Input
                 id="guest_phone"
                 value={formData.guest_phone}
@@ -223,7 +213,7 @@ export default function TransportPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="date">Data *</Label>
+                <Label htmlFor="date">{t("date")} *</Label>
                 <div className="relative">
                   <Input
                     id="date"
@@ -238,7 +228,7 @@ export default function TransportPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="num_people">Persone *</Label>
+                <Label htmlFor="num_people">{t("people")} *</Label>
                 <div className="relative">
                   <Input
                     id="num_people"
@@ -256,24 +246,24 @@ export default function TransportPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="route">Tratta / Destinazione *</Label>
+              <Label htmlFor="route">{t("transport.route")} *</Label>
               <Input
                 id="route"
                 value={formData.route}
                 onChange={(e) => setFormData({...formData, route: e.target.value})}
-                placeholder="Es. Aeroporto Brindisi → Torre Lapillo"
+                placeholder={t("transport.routePlaceholder")}
                 className="rounded-xl"
                 data-testid="transport-route-input"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Note (opzionale)</Label>
+              <Label htmlFor="notes">{t("notes")} ({t("optional")})</Label>
               <Textarea
                 id="notes"
                 value={formData.notes}
                 onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                placeholder="Es. Orario volo, numero bagagli..."
+                placeholder={t("transport.notesPlaceholder")}
                 className="rounded-xl resize-none"
                 rows={3}
                 data-testid="transport-notes-input"
@@ -286,10 +276,10 @@ export default function TransportPage() {
               className="w-full bg-slate-900 text-white rounded-xl py-3 font-semibold"
               data-testid="transport-submit-btn"
             >
-              {isSubmitting ? "Invio in corso..." : (
+              {isSubmitting ? t("sending") : (
                 <>
                   <Check className="w-4 h-4 mr-2" />
-                  Invia richiesta
+                  {t("transport.submitRequest")}
                 </>
               )}
             </Button>
