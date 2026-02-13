@@ -466,9 +466,6 @@ export default function AdminDashboardPage() {
     }
 
     if (dialogType === "guestBookings") {
-      // Debug: log properties
-      console.log("Properties in form:", data.properties);
-      
       return (
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           <div className="bg-blue-50 rounded-xl p-4 mb-4">
