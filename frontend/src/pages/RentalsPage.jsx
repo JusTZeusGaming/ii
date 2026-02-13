@@ -5,11 +5,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, Umbrella, Car, ChevronRight } from "lucide-react";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 export default function RentalsPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("all");
@@ -42,17 +44,17 @@ export default function RentalsPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Noleggi</h1>
-          <p className="text-slate-500 text-sm">Attrezzature per la tua vacanza</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("rentals.title")}</h1>
+          <p className="text-slate-500 text-sm">{t("rentals.subtitle")}</p>
         </div>
       </motion.div>
 
       {/* Category Tabs */}
       <motion.div className="flex gap-2 mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
         {[
-          { id: "all", label: "Tutti", icon: null },
-          { id: "mare", label: "Attrezzatura Mare", icon: Umbrella },
-          { id: "spostamenti", label: "Spostamenti", icon: Car }
+          { id: "all", label: t("rentals.all"), icon: null },
+          { id: "mare", label: t("rentals.seaEquipment"), icon: Umbrella },
+          { id: "spostamenti", label: t("rentals.transport"), icon: Car }
         ].map((cat) => (
           <button
             key={cat.id}
@@ -83,7 +85,7 @@ export default function RentalsPage() {
             <motion.div className="mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}>
               {activeCategory === "all" && (
                 <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Umbrella className="w-4 h-4" /> Attrezzatura Mare
+                  <Umbrella className="w-4 h-4" /> {t("rentals.seaEquipment")}
                 </h3>
               )}
               <div className="grid grid-cols-2 gap-3">
@@ -118,7 +120,7 @@ export default function RentalsPage() {
             <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }}>
               {activeCategory === "all" && (
                 <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Car className="w-4 h-4" /> Spostamenti
+                  <Car className="w-4 h-4" /> {t("rentals.transport")}
                 </h3>
               )}
               <div className="grid grid-cols-2 gap-3">
