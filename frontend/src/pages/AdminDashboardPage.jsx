@@ -452,23 +452,47 @@ export default function AdminDashboardPage() {
     }
 
     if (dialogType === "guestBookings") {
+      // Debug: log properties
+      console.log("Properties in form:", data.properties);
+      
       return (
         <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
           <div className="bg-blue-50 rounded-xl p-4 mb-4">
             <p className="text-sm text-blue-700">Crea un link univoco per l'ospite. Potrà accedere all'app con questo link durante il soggiorno.</p>
           </div>
-          <div><Label>Struttura *</Label>
-            <select className="w-full p-2 border rounded-lg text-sm" value={formData.property_slug || ""} onChange={(e) => {
-              const prop = data.properties.find(p => p.slug === e.target.value);
-              setFormData({...formData, property_slug: e.target.value, property_id: prop?.id || "", property_name: prop?.name || ""});
-            }}>
-              <option value="">Seleziona...</option>
-              {data.properties.map(p => <option key={p.id} value={p.slug}>{p.name}</option>)}
+          <div>
+            <Label>Struttura * ({data.properties?.length || 0} disponibili)</Label>
+            <select 
+              className="w-full p-2 border rounded-lg text-sm mt-1" 
+              value={formData.property_slug || ""} 
+              onChange={(e) => {
+                const selectedSlug = e.target.value;
+                const prop = data.properties.find(p => p.slug === selectedSlug);
+                console.log("Selected property:", prop);
+                setFormData({
+                  ...formData, 
+                  property_slug: selectedSlug, 
+                  property_id: prop?.id || "", 
+                  property_name: prop?.name || ""
+                });
+              }}
+            >
+              <option value="">-- Seleziona struttura --</option>
+              {data.properties && data.properties.length > 0 ? (
+                data.properties.map(p => (
+                  <option key={p.id} value={p.slug}>{p.name} ({p.slug})</option>
+                ))
+              ) : (
+                <option value="" disabled>Nessuna struttura disponibile</option>
+              )}
             </select>
+            {data.properties?.length === 0 && (
+              <p className="text-xs text-red-500 mt-1">⚠️ Nessuna struttura trovata. Crea prima una struttura nella tab "Strutture".</p>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div><Label>Nome ospite *</Label><Input value={formData.guest_name || ""} onChange={(e) => setFormData({...formData, guest_name: e.target.value})} /></div>
-            <div><Label>Cognome ospite *</Label><Input value={formData.guest_surname || ""} onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} /></div>
+            <div><Label>Nome ospite *</Label><Input value={formData.guest_name || ""} onChange={(e) => setFormData({...formData, guest_name: e.target.value})} placeholder="Mario" /></div>
+            <div><Label>Cognome ospite *</Label><Input value={formData.guest_surname || ""} onChange={(e) => setFormData({...formData, guest_surname: e.target.value})} placeholder="Rossi" /></div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div><Label>N. Ospiti</Label><Input type="number" min={1} value={formData.num_guests || 1} onChange={(e) => setFormData({...formData, num_guests: parseInt(e.target.value) || 1})} /></div>
