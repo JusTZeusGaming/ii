@@ -5,22 +5,24 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, MapPin, ChevronRight } from "lucide-react";
 import axios from "axios";
+import { useLanguage } from "@/context/LanguageContext";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
-const categories = [
-  { id: "all", label: "Tutte" },
-  { id: "libera", label: "Libere" },
-  { id: "attrezzata", label: "Attrezzate" },
-  { id: "family", label: "Family" },
-  { id: "giovani", label: "Giovani" },
-];
-
 export default function BeachesPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [beaches, setBeaches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
+
+  const categories = [
+    { id: "all", label: t("beaches.all") },
+    { id: "libera", label: t("beaches.free") },
+    { id: "attrezzata", label: t("beaches.equipped") },
+    { id: "family", label: t("beaches.family") },
+    { id: "giovani", label: t("beaches.young") },
+  ];
 
   useEffect(() => {
     const fetchBeaches = async () => {
@@ -54,8 +56,8 @@ export default function BeachesPage() {
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Spiagge & Lidi</h1>
-          <p className="text-slate-500 text-sm">Le più belle di Torre Lapillo</p>
+          <h1 className="text-2xl font-bold text-slate-900">{t("beaches.title")}</h1>
+          <p className="text-slate-500 text-sm">{t("beaches.subtitle")}</p>
         </div>
       </motion.div>
 
@@ -84,7 +86,7 @@ export default function BeachesPage() {
       {/* Recommended Carousel */}
       {activeFilter === "all" && recommendedBeaches.length > 0 && (
         <motion.div className="mb-6" initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Consigliate</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">{t("beaches.recommended")}</h3>
           <div className="horizontal-scroll">
             {recommendedBeaches.map((beach) => (
               <Card 
@@ -146,7 +148,7 @@ export default function BeachesPage() {
                     <span className="text-xs text-slate-400 flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> {beach.distance}
                     </span>
-                    <span className="text-xs text-amber-600 font-medium">Dettagli →</span>
+                    <span className="text-xs text-amber-600 font-medium">{t("details")} →</span>
                   </div>
                 </div>
               </Card>
