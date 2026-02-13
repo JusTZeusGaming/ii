@@ -8,40 +8,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { MessageCircle, Phone, AlertCircle, FileText } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 const WHATSAPP_NUMBER = "393293236473";
 
-const faqs = [
-  {
-    question: "Come funziona il check-in?",
-    answer: "Il check-in è disponibile dalle 15:00 alle 20:00. Riceverai le istruzioni per il ritiro delle chiavi via WhatsApp il giorno dell'arrivo."
-  },
-  {
-    question: "Posso portare animali?",
-    answer: "Gli animali domestici sono ammessi previo accordo con l'host. Contattaci prima della prenotazione per verificare la disponibilità."
-  },
-  {
-    question: "C'è il parcheggio?",
-    answer: "Sì, ogni struttura dispone di un posto auto privato o indica i parcheggi gratuiti più vicini nella sezione Mappe."
-  },
-  {
-    question: "Come funziona la raccolta differenziata?",
-    answer: "Il calendario della raccolta è affisso in casa. I bidoni condominiali si trovano nel cortile interno. Separa plastica, carta, umido e indifferenziata."
-  },
-  {
-    question: "Posso richiedere un late check-out?",
-    answer: "Il late check-out è soggetto a disponibilità. Contattaci almeno 24 ore prima della partenza per verificare."
-  }
-];
-
-const emergencyContacts = [
-  { name: "Emergenze", phone: "112" },
-  { name: "Guardia Medica", phone: "0833 569 111" },
-  { name: "Carabinieri Torre Lapillo", phone: "0833 565 100" },
-  { name: "Vigili del Fuoco", phone: "115" }
-];
-
 export default function HelpPage() {
+  const { t } = useLanguage();
   const openWhatsApp = (message = "") => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
@@ -55,8 +27,8 @@ export default function HelpPage() {
         initial={{ y: -10, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
       >
-        <h1 className="text-2xl font-bold text-slate-900">Aiuto & Supporto</h1>
-        <p className="text-slate-500 text-sm mt-1">Siamo qui per te</p>
+        <h1 className="text-2xl font-bold text-slate-900">{t("help.title")}</h1>
+        <p className="text-slate-500 text-sm mt-1">{t("help.subtitle")}</p>
       </motion.div>
 
       {/* Main WhatsApp CTA */}
@@ -67,17 +39,15 @@ export default function HelpPage() {
         className="mb-6"
       >
         <Card className="p-6 rounded-2xl bg-slate-900 text-white">
-          <h2 className="text-xl font-semibold mb-2">Hai bisogno di aiuto?</h2>
-          <p className="text-slate-400 text-sm mb-4">
-            Contattaci su WhatsApp per qualsiasi domanda o problema. Rispondiamo in pochi minuti!
-          </p>
+          <h2 className="text-xl font-semibold mb-2">{t("help.needHelp")}</h2>
+          <p className="text-slate-400 text-sm mb-4">{t("help.needHelpDesc")}</p>
           <Button
             onClick={() => openWhatsApp("Ciao, ho bisogno di aiuto")}
             className="w-full whatsapp-btn text-white rounded-xl py-4 font-semibold text-base"
             data-testid="main-whatsapp-btn"
           >
             <MessageCircle className="w-5 h-5 mr-2" />
-            Scrivi su WhatsApp
+            {t("help.writeWhatsApp")}
           </Button>
         </Card>
       </motion.div>
@@ -94,7 +64,7 @@ export default function HelpPage() {
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <FileText className="w-5 h-5 text-blue-600" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Domande frequenti</h3>
+            <h3 className="text-lg font-semibold text-slate-900">{t("help.faq")}</h3>
           </div>
           <Accordion type="single" collapsible className="w-full">
             {faqs.map((faq, index) => (
@@ -123,7 +93,7 @@ export default function HelpPage() {
             <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
               <AlertCircle className="w-5 h-5 text-red-600" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Contatti emergenze</h3>
+            <h3 className="text-lg font-semibold text-slate-900">{t("help.emergency")}</h3>
           </div>
           <div className="space-y-3">
             {emergencyContacts.map((contact, index) => (
@@ -150,12 +120,8 @@ export default function HelpPage() {
         transition={{ delay: 0.4 }}
       >
         <Card className="p-5 rounded-2xl bg-slate-50 border border-slate-100" data-testid="policy-section">
-          <h4 className="font-semibold text-slate-900 mb-2">Informazioni utili</h4>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Questa guida è fornita da Your Journey per aiutare gli ospiti durante il soggiorno a Torre Lapillo. 
-            Per cancellazioni e modifiche della prenotazione, contatta direttamente la piattaforma attraverso 
-            cui hai prenotato (Airbnb, Booking, etc.).
-          </p>
+          <h4 className="font-semibold text-slate-900 mb-2">{t("help.usefulInfo")}</h4>
+          <p className="text-sm text-slate-500 leading-relaxed">{t("help.usefulInfoDesc")}</p>
         </Card>
       </motion.div>
     </div>
