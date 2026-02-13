@@ -784,6 +784,9 @@ export default function AdminDashboardPage() {
                                     <SelectItem value="resolved">Risolto</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => archiveRequest("ticket", ticket.id)} title="Archivia">
+                                  <Archive className="w-3 h-3" />
+                                </Button>
                               </div>
                             </TableCell>
                           </TableRow>
