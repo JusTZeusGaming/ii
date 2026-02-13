@@ -855,6 +855,7 @@ export default function AdminDashboardPage() {
                           <TableHead>Data</TableHead>
                           <TableHead>Partecipanti</TableHead>
                           <TableHead>Stato</TableHead>
+                          <TableHead>Azioni</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -866,6 +867,20 @@ export default function AdminDashboardPage() {
                             <TableCell>{booking.date}</TableCell>
                             <TableCell>{booking.num_people}</TableCell>
                             <TableCell>{getStatusBadge(booking.status)}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <Select value={booking.status} onValueChange={(val) => confirmAndNotify("experience", booking, val)}>
+                                  <SelectTrigger className="h-7 w-[110px] text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">In attesa</SelectItem>
+                                    <SelectItem value="confirmed">Confermato</SelectItem>
+                                    <SelectItem value="cancelled">Annullato</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
