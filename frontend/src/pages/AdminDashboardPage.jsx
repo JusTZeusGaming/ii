@@ -716,11 +716,18 @@ export default function AdminDashboardPage() {
                             <TableCell className="font-semibold text-amber-600">{booking.total_price}</TableCell>
                             <TableCell>{getStatusBadge(booking.status)}</TableCell>
                             <TableCell>
-                              <select className="text-xs border rounded p-1" value={booking.status} onChange={(e) => updateRequestStatus("rental", booking.id, e.target.value)}>
-                                <option value="pending">In attesa</option>
-                                <option value="confirmed">Confermato</option>
-                                <option value="cancelled">Annullato</option>
-                              </select>
+                              <div className="flex items-center gap-1">
+                                <Select value={booking.status} onValueChange={(val) => confirmAndNotify("rental", booking, val)}>
+                                  <SelectTrigger className="h-7 w-[110px] text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">In attesa</SelectItem>
+                                    <SelectItem value="confirmed">Confermato</SelectItem>
+                                    <SelectItem value="cancelled">Annullato</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -759,11 +766,18 @@ export default function AdminDashboardPage() {
                             <TableCell>{booking.duration}</TableCell>
                             <TableCell>{getStatusBadge(booking.status)}</TableCell>
                             <TableCell>
-                              <select className="text-xs border rounded p-1" value={booking.status} onChange={(e) => updateRequestStatus("beach", booking.id, e.target.value)}>
-                                <option value="pending">In attesa</option>
-                                <option value="confirmed">Confermato</option>
-                                <option value="cancelled">Annullato</option>
-                              </select>
+                              <div className="flex items-center gap-1">
+                                <Select value={booking.status} onValueChange={(val) => confirmAndNotify("beach", booking, val)}>
+                                  <SelectTrigger className="h-7 w-[110px] text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">In attesa</SelectItem>
+                                    <SelectItem value="confirmed">Confermato</SelectItem>
+                                    <SelectItem value="cancelled">Annullato</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
