@@ -583,6 +583,59 @@ export default function AdminDashboardPage() {
       );
     }
 
+    if (dialogType === "nightlife") {
+      return (
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Nome evento *</Label><Input value={formData.name || ""} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Es. Praja Gallipoli" /></div>
+            <div><Label>Locale *</Label><Input value={formData.venue || ""} onChange={(e) => setFormData({...formData, venue: e.target.value})} placeholder="Es. Praja" /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Data *</Label><Input type="date" value={formData.date || ""} onChange={(e) => setFormData({...formData, date: e.target.value})} /></div>
+            <div><Label>Ora *</Label><Input value={formData.time || ""} onChange={(e) => setFormData({...formData, time: e.target.value})} placeholder="23:00" /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Prezzo ingresso</Label><Input value={formData.price_entry || ""} onChange={(e) => setFormData({...formData, price_entry: e.target.value})} placeholder="20" /></div>
+            <div><Label>Prezzo ingresso + navetta</Label><Input value={formData.price_with_transport || ""} onChange={(e) => setFormData({...formData, price_with_transport: e.target.value})} placeholder="35" /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Dress code</Label><Input value={formData.dress_code || ""} onChange={(e) => setFormData({...formData, dress_code: e.target.value})} placeholder="Smart casual" /></div>
+            <div><Label>Stato</Label>
+              <select className="w-full p-2 border rounded-lg text-sm" value={formData.status || "available"} onChange={(e) => setFormData({...formData, status: e.target.value})}>
+                <option value="available">Disponibile</option>
+                <option value="limited">Ultimi posti</option>
+                <option value="sold_out">Sold Out</option>
+              </select>
+            </div>
+          </div>
+          <div><Label>Min. partecipanti navetta</Label><Input type="number" value={formData.min_participants || 4} onChange={(e) => setFormData({...formData, min_participants: parseInt(e.target.value)})} /></div>
+          <div><Label>Immagine URL</Label><Input value={formData.image_url || ""} onChange={(e) => setFormData({...formData, image_url: e.target.value})} placeholder="https://..." /></div>
+          <div><Label>Note</Label><Textarea value={formData.notes || ""} onChange={(e) => setFormData({...formData, notes: e.target.value})} rows={2} /></div>
+        </div>
+      );
+    }
+
+    if (dialogType === "transports") {
+      return (
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          <div><Label>Nome *</Label><Input value={formData.name || ""} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="Es. NCC Lecce - Torre Lapillo" /></div>
+          <div><Label>Descrizione</Label><Textarea value={formData.description || ""} onChange={(e) => setFormData({...formData, description: e.target.value})} rows={2} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><Label>Categoria *</Label>
+              <select className="w-full p-2 border rounded-lg text-sm" value={formData.category || "ncc"} onChange={(e) => setFormData({...formData, category: e.target.value})}>
+                <option value="navette">Navette</option>
+                <option value="ncc">NCC / Taxi</option>
+                <option value="gite">Gite Giornaliere</option>
+              </select>
+            </div>
+            <div><Label>Telefono</Label><Input value={formData.contact_phone || ""} onChange={(e) => setFormData({...formData, contact_phone: e.target.value})} placeholder="+39..." /></div>
+          </div>
+          <div><Label>Prezzo Info</Label><Input value={formData.price_info || ""} onChange={(e) => setFormData({...formData, price_info: e.target.value})} placeholder="Es. da €30" /></div>
+          <div><Label>Policy cancellazione</Label><Input value={formData.cancellation_policy || ""} onChange={(e) => setFormData({...formData, cancellation_policy: e.target.value})} placeholder="Es. Cancellazione gratuita entro 24h" /></div>
+        </div>
+      );
+    }
+
     return null;
   };
 
