@@ -274,7 +274,9 @@ export default function AdminDashboardPage() {
       experiences: "experiences",
       rentals: "rentals",
       guestBookings: "guest-bookings",
-      mapInfo: "map-info"
+      mapInfo: "map-info",
+      nightlife: "nightlife-events",
+      transports: "transports"
     };
 
     try {
@@ -294,7 +296,9 @@ export default function AdminDashboardPage() {
       experiences: "experiences",
       rentals: "rentals",
       guestBookings: "guest-bookings",
-      mapInfo: "map-info"
+      mapInfo: "map-info",
+      nightlife: "nightlife-events",
+      transports: "transports"
     };
 
     const endpoint = endpoints[dialogType];
