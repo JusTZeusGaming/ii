@@ -11,21 +11,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { 
-  Wifi, 
-  LogIn, 
-  LogOut, 
-  ScrollText, 
-  Phone, 
-  Wrench,
-  HelpCircle,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles
+  Wifi, LogIn, LogOut, ScrollText, Phone, Wrench, HelpCircle, ChevronLeft, ChevronRight, Sparkles
 } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function AccommodationPage() {
   const navigate = useNavigate();
   const { currentProperty: property, propertySlug, loading } = useProperty();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
@@ -42,9 +35,9 @@ export default function AccommodationPage() {
   if (!property) {
     return (
       <div className="px-5 py-6 text-center">
-        <p className="text-slate-500">Struttura non trovata</p>
+        <p className="text-slate-500">{t("accom.notFound")}</p>
         <Button onClick={() => navigate("/guida")} className="mt-4">
-          Torna alla guida
+          {t("accom.backToGuide")}
         </Button>
       </div>
     );
@@ -69,7 +62,7 @@ export default function AccommodationPage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-slate-900">{property.name}</h1>
-          <p className="text-slate-500 text-sm">Il tuo alloggio</p>
+          <p className="text-slate-500 text-sm">{t("accom.yourAccommodation")}</p>
         </div>
       </motion.div>
 
@@ -85,15 +78,15 @@ export default function AccommodationPage() {
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Wifi className="w-5 h-5 text-blue-600" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Wi-Fi</h3>
+              <h3 className="text-lg font-semibold text-slate-900">{t("accom.wifi")}</h3>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-slate-500">Rete</span>
+                <span className="text-slate-500">{t("accom.network")}</span>
                 <span className="font-medium text-slate-900">{property.wifi_name}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-slate-500">Password</span>
+                <span className="text-slate-500">{t("accom.password")}</span>
                 <span className="font-mono text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">
                   {property.wifi_password}
                 </span>
@@ -113,7 +106,7 @@ export default function AccommodationPage() {
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <LogIn className="w-5 h-5 text-green-600" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Check-in</h3>
+              <h3 className="text-lg font-semibold text-slate-900">{t("accom.checkin")}</h3>
             </div>
             <p className="text-amber-600 font-semibold mb-2">{property.checkin_time}</p>
             <p className="text-slate-600 text-sm leading-relaxed">
@@ -133,7 +126,7 @@ export default function AccommodationPage() {
               <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                 <LogOut className="w-5 h-5 text-red-600" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Check-out</h3>
+              <h3 className="text-lg font-semibold text-slate-900">{t("accom.checkout")}</h3>
             </div>
             <p className="text-amber-600 font-semibold mb-2">{property.checkout_time}</p>
             <p className="text-slate-600 text-sm leading-relaxed">
@@ -153,7 +146,7 @@ export default function AccommodationPage() {
               <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                 <ScrollText className="w-5 h-5 text-purple-600" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Regole della casa</h3>
+              <h3 className="text-lg font-semibold text-slate-900">{t("accom.houseRules")}</h3>
             </div>
             <ul className="space-y-2">
               {property.house_rules?.map((rule, index) => (
@@ -177,11 +170,11 @@ export default function AccommodationPage() {
               <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
                 <Phone className="w-5 h-5 text-amber-600" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Contatti</h3>
+              <h3 className="text-lg font-semibold text-slate-900">{t("accom.contacts")}</h3>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-slate-500">Host ({property.host_name})</span>
+                <span className="text-slate-500">{t("accom.host")} ({property.host_name})</span>
                 <a 
                   href={`tel:${property.host_phone}`}
                   className="text-slate-900 font-medium hover:text-amber-600"
@@ -221,8 +214,8 @@ export default function AccommodationPage() {
                   <Wrench className="w-5 h-5 text-rose-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Guasti & Assistenza</h3>
-                  <p className="text-slate-500 text-sm">Soluzioni rapide e ticket supporto</p>
+                  <h3 className="text-lg font-semibold text-slate-900">{t("accom.troubleshooting")}</h3>
+                  <p className="text-slate-500 text-sm">{t("accom.troubleshootingDesc")}</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-slate-400" />
@@ -247,8 +240,8 @@ export default function AccommodationPage() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900">Servizi Aggiuntivi</h3>
-                  <p className="text-slate-500 text-sm">Pulizia, biancheria, check-in romantico...</p>
+                  <h3 className="text-lg font-semibold text-slate-900">{t("accom.extraServices")}</h3>
+                  <p className="text-slate-500 text-sm">{t("accom.extraServicesDesc")}</p>
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 text-amber-600" />
@@ -268,8 +261,8 @@ export default function AccommodationPage() {
                 <HelpCircle className="w-5 h-5 text-slate-600" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">FAQ Casa</h3>
-                <p className="text-slate-500 text-xs">{property.faq?.length || 0} risposte pronte</p>
+                <h3 className="text-lg font-semibold text-slate-900">{t("accom.faqTitle")}</h3>
+                <p className="text-slate-500 text-xs">{property.faq?.length || 0} {t("accom.faqCount")}</p>
               </div>
             </div>
             <Accordion type="single" collapsible className="w-full">
@@ -286,7 +279,7 @@ export default function AccommodationPage() {
             </Accordion>
             {property.faq?.length > 10 && (
               <p className="text-center text-sm text-slate-500 mt-4">
-                + altre {property.faq.length - 10} FAQ disponibili
+                + {t("accom.moreFaq", { count: property.faq.length - 10 })}
               </p>
             )}
           </Card>
