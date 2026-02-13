@@ -13,7 +13,28 @@ import { useLanguage } from "@/context/LanguageContext";
 const WHATSAPP_NUMBER = "393293236473";
 
 export default function HelpPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const faqs = language === "it" ? [
+    { question: "Come funziona il check-in?", answer: "Il check-in è disponibile dalle 15:00 alle 20:00. Riceverai le istruzioni per il ritiro delle chiavi via WhatsApp il giorno dell'arrivo." },
+    { question: "Posso portare animali?", answer: "Gli animali domestici sono ammessi previo accordo con l'host. Contattaci prima della prenotazione per verificare la disponibilità." },
+    { question: "C'è il parcheggio?", answer: "Sì, ogni struttura dispone di un posto auto privato o indica i parcheggi gratuiti più vicini nella sezione Mappe." },
+    { question: "Come funziona la raccolta differenziata?", answer: "Il calendario della raccolta è affisso in casa. I bidoni condominiali si trovano nel cortile interno. Separa plastica, carta, umido e indifferenziata." },
+    { question: "Posso richiedere un late check-out?", answer: "Il late check-out è soggetto a disponibilità. Contattaci almeno 24 ore prima della partenza per verificare." }
+  ] : [
+    { question: "How does check-in work?", answer: "Check-in is available from 3:00 PM to 8:00 PM. You will receive key pickup instructions via WhatsApp on arrival day." },
+    { question: "Can I bring pets?", answer: "Pets are allowed by prior agreement with the host. Contact us before booking to check availability." },
+    { question: "Is there parking?", answer: "Yes, each property has a private parking spot or indicates the nearest free parking in the Maps section." },
+    { question: "How does waste sorting work?", answer: "The collection schedule is posted in the house. Communal bins are in the courtyard. Separate plastic, paper, organic and general waste." },
+    { question: "Can I request a late check-out?", answer: "Late check-out is subject to availability. Contact us at least 24 hours before departure." }
+  ];
+
+  const emergencyContacts = [
+    { name: language === "it" ? "Emergenze" : "Emergency", phone: "112" },
+    { name: language === "it" ? "Guardia Medica" : "Medical Guard", phone: "0833 569 111" },
+    { name: "Carabinieri Torre Lapillo", phone: "0833 565 100" },
+    { name: language === "it" ? "Vigili del Fuoco" : "Fire Dept.", phone: "115" }
+  ];
   const openWhatsApp = (message = "") => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
