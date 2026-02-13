@@ -77,6 +77,7 @@ export default function AdminDashboardPage() {
     experiences: [],
     rentals: [],
     nightlifeEvents: [],
+    transports: [],
     guestBookings: [],
     allRequests: null,
     mapInfo: []
@@ -86,6 +87,7 @@ export default function AdminDashboardPage() {
   const [dialogType, setDialogType] = useState(null);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [showArchived, setShowArchived] = useState(false);
   
   // Property Editor state
   const [propertyEditorOpen, setPropertyEditorOpen] = useState(false);
