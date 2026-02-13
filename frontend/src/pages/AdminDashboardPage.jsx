@@ -83,6 +83,13 @@ export default function AdminDashboardPage() {
   // Property Editor state
   const [propertyEditorOpen, setPropertyEditorOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
+  
+  // Send Confirmation Dialog state
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmItem, setConfirmItem] = useState(null);
+  const [confirmCollection, setConfirmCollection] = useState(null);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [confirmStatus, setConfirmStatus] = useState("confirmed");
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
