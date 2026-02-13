@@ -1339,16 +1339,17 @@ async def admin_delete_transport(transport_id: str, admin: dict = Depends(get_cu
 
 # Admin View All Requests
 @api_router.get("/admin/all-requests")
-async def admin_get_all_requests(admin: dict = Depends(get_current_admin)):
+async def admin_get_all_requests(show_archived: bool = False, admin: dict = Depends(get_current_admin)):
     """Get all requests from all collections"""
-    rental_bookings = await db.rental_bookings.find({}, {"_id": 0}).to_list(100)
-    restaurant_bookings = await db.restaurant_bookings.find({}, {"_id": 0}).to_list(100)
-    beach_bookings = await db.beach_bookings.find({}, {"_id": 0}).to_list(100)
-    experience_bookings = await db.experience_bookings.find({}, {"_id": 0}).to_list(100)
-    nightlife_bookings = await db.nightlife_bookings.find({}, {"_id": 0}).to_list(100)
-    transport_requests = await db.transport_requests.find({}, {"_id": 0}).to_list(100)
-    support_tickets = await db.support_tickets.find({}, {"_id": 0}).to_list(100)
-    extra_service_requests = await db.extra_service_requests.find({}, {"_id": 0}).to_list(100)
+    filt = {} if show_archived else {"archived": {"$ne": True}}
+    rental_bookings = await db.rental_bookings.find(filt, {"_id": 0}).to_list(100)
+    restaurant_bookings = await db.restaurant_bookings.find(filt, {"_id": 0}).to_list(100)
+    beach_bookings = await db.beach_bookings.find(filt, {"_id": 0}).to_list(100)
+    experience_bookings = await db.experience_bookings.find(filt, {"_id": 0}).to_list(100)
+    nightlife_bookings = await db.nightlife_bookings.find(filt, {"_id": 0}).to_list(100)
+    transport_requests = await db.transport_requests.find(filt, {"_id": 0}).to_list(100)
+    support_tickets = await db.support_tickets.find(filt, {"_id": 0}).to_list(100)
+    extra_service_requests = await db.extra_service_requests.find(filt, {"_id": 0}).to_list(100)
     
     return {
         "rental_bookings": rental_bookings,
