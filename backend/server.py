@@ -1383,6 +1383,143 @@ async def admin_update_request_status(collection: str, request_id: str, status: 
         raise HTTPException(status_code=404, detail="Request not found")
     return {"success": True}
 
+@api_router.post("/admin/send-guest-email")
+async def admin_send_guest_email(data: dict, admin: dict = Depends(get_current_admin)):
+    """Send confirmation/cancellation email to guest"""
+    guest_email = data.get("guest_email")
+    guest_name = data.get("guest_name", "")
+    service_name = data.get("service_name", "")
+    status = data.get("status", "confirmed")
+    
+    if not guest_email:
+        raise HTTPException(status_code=400, detail="No guest email provided")
+    if not resend.api_key:
+        raise HTTPException(status_code=500, detail="Email service not configured")
+    
+    status_label = "CONFERMATA" if status == "confirmed" else "ANNULLATA"
+    status_color = "#22c55e" if status == "confirmed" else "#ef4444"
+    status_emoji = "&#10004;" if status == "confirmed" else "&#10006;"
+    
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">
+        <div style="background:#0F172A;color:white;padding:20px;border-radius:12px 12px 0 0;text-align:center;">
+            <h1 style="margin:0;font-size:24px;">Your Journey</h1>
+            <p style="margin:5px 0 0;opacity:0.8;">Torre Lapillo</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e5e7eb;border-top:none;padding:30px;border-radius:0 0 12px 12px;">
+            <div style="text-align:center;margin-bottom:20px;">
+                <span style="font-size:48px;color:{status_color};">{status_emoji}</span>
+            </div>
+            <h2 style="color:{status_color};text-align:center;margin-top:0;">Prenotazione {status_label}</h2>
+            <p style="text-align:center;color:#64748b;">Ciao {guest_name},</p>
+            <div style="background:#f8fafc;border-radius:8px;padding:15px;margin:20px 0;">
+                <p style="margin:5px 0;"><strong>Servizio:</strong> {service_name}</p>
+                <p style="margin:5px 0;"><strong>Stato:</strong> {status_label}</p>
+            </div>
+            {"<p style='text-align:center;color:#64748b;'>Grazie per aver scelto Your Journey! Ti aspettiamo.</p>" if status == "confirmed" else "<p style='text-align:center;color:#64748b;'>Ci dispiace per l'inconveniente. Ti contatteremo per trovare un'alternativa.</p>"}
+            <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;" />
+            <p style="text-align:center;color:#94a3b8;font-size:12px;">Your Journey - Guida Ospiti Torre Lapillo</p>
+        </div>
+    </div>
+    """
+    
+    try:
+        params = {
+            "from": SENDER_EMAIL,
+            "to": [guest_email],
+            "subject": f"Prenotazione {status_label} - {service_name} | Your Journey",
+            "html": html
+        }
+        result = await asyncio.to_thread(resend.Emails.send, params)
+        return {"success": True, "message": "Email sent to guest"}
+    except Exception as e:
+        logger.error(f"Failed to send guest email: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to send email: {str(e)}")
+
+@api_router.put("/admin/archive-request/{collection}/{request_id}")
+async def admin_archive_request(collection: str, request_id: str, admin: dict = Depends(get_current_admin)):
+    """Archive a request"""
+    collection_map = {
+        "rental": "rental_bookings",
+        "restaurant": "restaurant_bookings",
+        "beach": "beach_bookings",
+        "experience": "experience_bookings",
+        "nightlife": "nightlife_bookings",
+        "transport": "transport_requests",
+        "ticket": "support_tickets",
+        "extra": "extra_service_requests"
+    }
+    col_name = collection_map.get(collection)
+    if not col_name:
+        raise HTTPException(status_code=400, detail="Invalid collection")
+    
+    result = await db[col_name].update_one({"id": request_id}, {"$set": {"archived": True}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Request not found")
+    return {"success": True}
+
+# ============== NIGHTLIFE EVENTS ADMIN CRUD ==============
+
+@api_router.get("/admin/nightlife-events")
+async def admin_get_nightlife_events(admin: dict = Depends(get_current_admin)):
+    events = await db.nightlife_events.find({"_id": 0}).to_list(1000)
+    return [e for e in events if "_id" not in e]
+
+@api_router.post("/admin/nightlife-events")
+async def admin_create_nightlife_event(event: NightlifeEvent, admin: dict = Depends(get_current_admin)):
+    doc = event.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    await db.nightlife_events.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
+
+@api_router.put("/admin/nightlife-events/{event_id}")
+async def admin_update_nightlife_event(event_id: str, event: NightlifeEvent, admin: dict = Depends(get_current_admin)):
+    doc = event.model_dump()
+    doc["id"] = event_id
+    result = await db.nightlife_events.update_one({"id": event_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return doc
+
+@api_router.delete("/admin/nightlife-events/{event_id}")
+async def admin_delete_nightlife_event(event_id: str, admin: dict = Depends(get_current_admin)):
+    result = await db.nightlife_events.delete_one({"id": event_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return {"success": True}
+
+# ============== TRANSPORT ADMIN CRUD ==============
+
+@api_router.get("/admin/transports")
+async def admin_get_transports(admin: dict = Depends(get_current_admin)):
+    transports = await db.transports.find({"_id": 0}).to_list(1000)
+    return [t for t in transports if "_id" not in t]
+
+@api_router.post("/admin/transports")
+async def admin_create_transport(transport: TransportCreate, admin: dict = Depends(get_current_admin)):
+    doc = transport.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    await db.transports.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
+
+@api_router.put("/admin/transports/{transport_id}")
+async def admin_update_transport(transport_id: str, transport: TransportCreate, admin: dict = Depends(get_current_admin)):
+    doc = transport.model_dump()
+    doc["id"] = transport_id
+    result = await db.transports.update_one({"id": transport_id}, {"$set": doc})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Transport not found")
+    return doc
+
+@api_router.delete("/admin/transports/{transport_id}")
+async def admin_delete_transport(transport_id: str, admin: dict = Depends(get_current_admin)):
+    result = await db.transports.delete_one({"id": transport_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Transport not found")
+    return {"success": True}
+
 # ============== SEED DATA ==============
 
 @api_router.post("/seed")
