@@ -955,6 +955,7 @@ export default function AdminDashboardPage() {
                           <TableHead>Telefono</TableHead>
                           <TableHead>Data</TableHead>
                           <TableHead>Stato</TableHead>
+                          <TableHead>Azioni</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -966,6 +967,20 @@ export default function AdminDashboardPage() {
                             <TableCell>{req.guest_phone}</TableCell>
                             <TableCell>{req.date}</TableCell>
                             <TableCell>{getStatusBadge(req.status)}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <Select value={req.status} onValueChange={(val) => confirmAndNotify("extra", req, val)}>
+                                  <SelectTrigger className="h-7 w-[110px] text-xs">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">In attesa</SelectItem>
+                                    <SelectItem value="confirmed">Confermato</SelectItem>
+                                    <SelectItem value="cancelled">Annullato</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
