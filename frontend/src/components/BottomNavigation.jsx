@@ -1,15 +1,17 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, Building2, Heart, HelpCircle } from "lucide-react";
-
-const navItems = [
-  { to: "/guida", icon: Home, label: "Guida" },
-  { to: "/alloggio", icon: Building2, label: "Alloggio" },
-  { to: "/noleggi", icon: Heart, label: "Servizi" },
-  { to: "/aiuto", icon: HelpCircle, label: "Aiuto" },
-];
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function BottomNavigation() {
   const location = useLocation();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { to: "/guida", icon: Home, label: t("nav.guide") },
+    { to: "/alloggio", icon: Building2, label: t("nav.accommodation") },
+    { to: "/noleggi", icon: Heart, label: t("nav.services") },
+    { to: "/aiuto", icon: HelpCircle, label: t("nav.help") },
+  ];
   
   return (
     <nav className="bottom-nav" data-testid="bottom-navigation">
@@ -23,7 +25,7 @@ export default function BottomNavigation() {
             <NavLink
               key={item.to}
               to={item.to}
-              data-testid={`nav-${item.label.toLowerCase()}`}
+              data-testid={`nav-${item.to.slice(1)}`}
               className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${
                 isActive 
                   ? "text-slate-900" 
